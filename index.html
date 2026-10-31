@@ -87,6 +87,7 @@ h2{font:700 32px/1.05 var(--display);margin:0 0 8px;letter-spacing:-.01em}
 .anni{align-self:center;display:inline-block;margin:0 0 16px;padding:7px 14px;border-radius:999px;background:linear-gradient(90deg,rgba(255,143,200,.22),rgba(255,211,107,.18));border:1px solid rgba(255,143,200,.4);font-weight:800;font-size:14px}
 .vs{font:700 18px var(--display);color:var(--yellow);transform:rotate(-8deg)}
 .cta{align-self:center;display:inline-flex;gap:8px;align-items:center;padding:14px 26px;border-radius:999px;background:var(--text);color:#1a1230;font-weight:800;text-decoration:none;box-shadow:0 10px 30px rgba(255,143,200,.25)}
+.floaties{position:absolute;inset:0 calc(-1 * var(--gr)) 0 calc(-1 * var(--gl));overflow:hidden;pointer-events:none}
 .floaties span{position:absolute;font-size:30px;opacity:.55;animation:float 7s ease-in-out infinite}
 .floaties span:nth-child(1){top:10%;left:4%}
 .floaties span:nth-child(2){top:16%;right:6%;animation-delay:-2s}
@@ -254,18 +255,16 @@ h2{font:700 32px/1.05 var(--display);margin:0 0 8px;letter-spacing:-.01em}
 .letter p{margin:0 0 32px}
 .letter p:last-child{margin:0}
 .letter .sig{text-align:right;font-weight:700}
-.coupons{display:grid;gap:12px;margin-top:6px}
-.cp{position:relative;display:flex;align-items:stretch;border:0;padding:0;text-align:left;border-radius:18px;background:linear-gradient(120deg,#2b2150,#3a2560);overflow:hidden;min-height:96px}
-.cp .ce{width:78px;flex:none;display:grid;place-items:center;font-size:36px;border-right:2px dashed rgba(255,255,255,.18);background:rgba(255,255,255,.04)}
-.cp .ct{padding:14px 16px;display:flex;flex-direction:column;justify-content:center;gap:2px}
-.cp .ct b{font:700 19px/1.15 var(--display)}
-.cp .ct small{color:var(--muted);font-size:14px;font-weight:600}
-.cp .ct i{font-style:normal;font-size:11.5px;font-weight:800;letter-spacing:.1em;color:var(--pink);margin-top:4px}
-.cp::before,.cp::after{content:"";position:absolute;left:69px;width:18px;height:18px;border-radius:50%;background:var(--bg)}
-.cp::before{top:-9px}.cp::after{bottom:-9px}
-.stamp{position:absolute;right:12px;top:50%;transform:translateY(-50%) rotate(-14deg) scale(1.6);opacity:0;border:3px solid var(--mint);color:var(--mint);font:700 16px var(--display);padding:3px 10px;border-radius:8px;transition:.3s cubic-bezier(.3,1.6,.5,1);pointer-events:none;background:rgba(17,13,29,.6)}
-.cp.used .stamp{opacity:1;transform:translateY(-50%) rotate(-14deg)}
-.cp.used .ct{opacity:.55}
+.ask{position:relative;margin-top:10px;border-radius:24px;background:linear-gradient(160deg,#2b2150,#3a2560);padding:22px 16px 18px;text-align:center;overflow:hidden}
+.ask-q{font:700 23px/1.2 var(--display);margin:0 0 4px}
+.ask-arena{position:relative;height:210px;margin-top:10px;touch-action:manipulation}
+.ask-yes{border:0;border-radius:999px;padding:16px 26px;background:linear-gradient(90deg,var(--pink),#ff5f9e);color:#2a1235;font:700 19px var(--display);box-shadow:0 10px 30px rgba(255,95,158,.4);animation:yesPulse 1.6s ease-in-out infinite}
+@keyframes yesPulse{50%{transform:scale(1.06)}}
+.ask-yes.done{animation:none;background:linear-gradient(90deg,var(--mint),#7fd8ff)}
+.ask-no{position:absolute;left:50%;top:120px;transform:translateX(-50%);border:1px solid var(--line);border-radius:999px;padding:11px 18px;background:rgba(255,255,255,.08);color:var(--muted);font-weight:800;font-size:15px;white-space:nowrap;transition:left .28s cubic-bezier(.3,1.5,.5,1),top .28s cubic-bezier(.3,1.5,.5,1),font-size .3s,padding .3s}
+.ask-no.moved{transform:none}
+.ask-no.give{color:#2a1235;background:linear-gradient(90deg,var(--pink),#ffad7a);border:0}
+.ask-note{min-height:22px;margin:6px 0 0;font-weight:800;color:var(--yellow);font-size:15px}
 footer{text-align:center;color:var(--faint);font-size:13.5px;padding:46px 0 calc(110px + env(safe-area-inset-bottom,0px))}
 footer button{margin-top:12px;border:1px solid var(--line);background:none;border-radius:999px;padding:8px 16px;font-weight:700;color:var(--muted);font-size:13px}
 
@@ -288,6 +287,7 @@ html.locked .dock{display:none}
 .toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 16px);transform:translate(-50%,-30px);opacity:0;z-index:130;background:#fff;color:#1a1230;font-weight:800;padding:10px 16px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.4);transition:.3s;pointer-events:none;max-width:calc(100vw - 32px);text-align:center;font-size:14.5px}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 
+body{overflow-x:clip}
 /* ---------- mensiversary ---------- */
 #mensi{position:fixed;inset:0;z-index:110;display:flex;align-items:safe center;justify-content:center;overflow-y:auto;
   padding:calc(env(safe-area-inset-top,0px) + 24px) var(--gr) calc(env(safe-area-inset-bottom,0px) + 24px) var(--gl);
@@ -325,7 +325,7 @@ html:not(.anim) .orbit span{opacity:.8}
 .vsbar span{transform-origin:left center}
 .pop-heart{position:fixed;z-index:115;pointer-events:none;font-size:26px;will-change:transform,opacity}
 .anim .floaties span{animation:none}
-.anim .ep-chat .msg,.anim .note,.anim .letter,.anim #coupons .cp{opacity:0}
+.anim .ep-chat .msg,.anim .note,.anim .letter,.anim #ask{opacity:0}
 </style>
 
 <div id="lock" role="dialog" aria-modal="true" aria-label="Layar kunci">
@@ -468,9 +468,16 @@ html:not(.anim) .orbit span{opacity:.8}
     </div>
     <section style="padding-top:48px">
       <p class="kicker">bonus</p>
-      <h2>Kupon Senior</h2>
-      <p class="sub">Berlaku seumur hidup. Ketuk kupon, terus tunjukin ke junior buat ditukar.</p>
-      <div class="coupons" id="coupons"></div>
+      <h2>Satu Pertanyaan Lagi</h2>
+      <p class="sub">Jawab yang jujur ya, senior. Junior nungguin. 🦖</p>
+      <div class="ask" id="ask">
+        <p class="ask-q">Jadi, kita gimana nih? 🥺</p>
+        <div class="ask-arena" id="askArena">
+          <button class="ask-yes" id="askYes">💍 Lanjut sampai nikah</button>
+          <button class="ask-no" id="askNo">Cukup 5 bulan aja</button>
+        </div>
+        <p class="ask-note" id="askNote" aria-live="polite"></p>
+      </div>
     </section>
   </section>
 
@@ -934,28 +941,59 @@ $('#board').innerHTML = QUOTES.map((id, i) => {
 }).join('');
 $('#board').addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) jumpTo(+b.dataset.go); });
 
-/* ---------- coupons ---------- */
-const CP = [
-  ['fore', '🥤', '1× Butterscotch Fore', 'kalau ga suka, junior yang minum. senior pesen yang lain.'],
-  ['mie', '🍜', '1× Mie Ayam', 'buat dua orang yang sama-sama belum makan mie ayam dari Februari.'],
-  ['jemput', '🛵', '1× Dijemput', 'garansi anti nyebur got & anti nabrak gerobak somay.'],
-  ['culik', '🚆', '1× Diculik Naik Kereta', 'ke tempat yang jauh. bukan ke Kamboja.'],
-];
-const CP_KEY = 'siap-senior:kupon';
-let used = {};
-try { used = JSON.parse(store.get(CP_KEY) || '{}') || {}; } catch (e) { used = {}; }
-const cpEl = $('#coupons');
-cpEl.innerHTML = CP.map(([k, e, t, s]) => `<button class="cp${used[k] ? ' used' : ''}" data-k="${k}" aria-pressed="${!!used[k]}"><div class="ce" aria-hidden="true">${e}</div><div class="ct"><b>${t}</b><small>${s}</small><i>KUPON SENIOR · TANPA KEDALUWARSA</i></div><div class="stamp">DITUKAR ✓</div></button>`).join('');
-cpEl.addEventListener('click', e => {
-  const b = e.target.closest('.cp');
-  if (!b) return;
-  const k = b.dataset.k;
-  used[k] = !used[k];
-  b.classList.toggle('used', used[k]);
-  b.setAttribute('aria-pressed', used[k]);
-  store.set(CP_KEY, JSON.stringify(used));
-  if (used[k]) { toast('kupon ditukar! tunjukin layar ini ke junior 💜'); burst(['🎟️', '💜', '✨', 'heart'], originOf(b), 45) || rain(['💜', '✨', '🎟️'], 18); }
+/* ---------- lanjut / cukup ---------- */
+const ASK_KEY = 'siap-senior:nikah';
+const yesB = $('#askYes'), noB = $('#askNo'), arena = $('#askArena'), note = $('#askNote');
+const lbl = A.months > 0 ? A.label : '5 bulan';
+noB.textContent = `Cukup ${lbl} aja`;
+const TEASE = ['eits, ga bisa 😝', 'salah pencet ya?', 'tombolnya malu 🙈', 'coba lagi deh 🙃', 'pilihan ini lagi rusak 🔧', 'ga ada pilihan itu 😌', 'udah, pencet yang pink aja 💍'];
+let dodges = 0, lastDodge = 0;
+function sayYes(from) {
+  yesB.classList.add('done');
+  yesB.textContent = '💍 deal, sampai nikah!';
+  note.textContent = 'YEAY! udah aku screenshot, ga bisa ditarik lagi 😝💍';
+  store.set(ASK_KEY, '1');
+  burst(['💍', 'heart', '💜', '🥰'], originOf(from), 90) || rain(['💍', '💜', '💗', '🥰'], 40);
+}
+function dodge(e) {
+  if (noB.classList.contains('give')) return;
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  if (Date.now() - lastDodge < 350) return;
+  lastDodge = Date.now();
+  dodges++;
+  if (dodges > TEASE.length + 2) {
+    noB.classList.add('give');
+    noB.textContent = '💍 lanjut sampai nikah juga';
+    note.textContent = 'tuh kan, tombolnya aja setuju 🥰';
+    noB.style.fontSize = '';
+    noB.style.left = Math.max(0, (arena.clientWidth - noB.offsetWidth) / 2) + 'px';
+    noB.style.top = '130px';
+    return;
+  }
+  note.textContent = TEASE[(dodges - 1) % TEASE.length];
+  noB.style.fontSize = Math.max(11, 15 - dodges * .6) + 'px';
+  const W = arena.clientWidth, H = arena.clientHeight, bw = noB.offsetWidth, bh = noB.offsetHeight;
+  const y0 = yesB.offsetTop, y1 = y0 + yesB.offsetHeight, x0 = yesB.offsetLeft, x1 = x0 + yesB.offsetWidth;
+  const cur = { x: noB.offsetLeft, y: noB.offsetTop };
+  let x = 0, y = 0;
+  for (let k = 0; k < 20; k++) {
+    x = Math.random() * Math.max(0, W - bw);
+    y = Math.random() * Math.max(0, H - bh);
+    const hitsYes = x < x1 + 8 && x + bw > x0 - 8 && y < y1 + 8 && y + bh > y0 - 8;
+    if (!hitsYes && Math.hypot(x - cur.x, y - cur.y) > 70) break;
+  }
+  noB.classList.add('moved');
+  noB.style.left = x + 'px';
+  noB.style.top = y + 'px';
+  if (canAnim) anime({ targets: noB, rotate: [anime.random(-25, 25), 0], duration: 500, easing: 'easeOutElastic(1, .5)' });
+}
+['pointerenter', 'pointerdown', 'touchstart', 'focus'].forEach(ev => noB.addEventListener(ev, dodge, { passive: false }));
+noB.addEventListener('click', e => {
+  if (noB.classList.contains('give')) return sayYes(noB);
+  dodge(e);
 });
+yesB.addEventListener('click', () => sayYes(yesB));
+if (store.get(ASK_KEY) === '1') { yesB.classList.add('done'); yesB.textContent = '💍 deal, sampai nikah!'; }
 
 /* ---------- dock ---------- */
 const links = [...document.querySelectorAll('.dock a')];
@@ -1066,11 +1104,11 @@ if (canAnim) {
       anime({ targets: t.querySelectorAll('.note'), opacity: [0, 1], scale: [.3, 1], rotate: el => [anime.random(-25, 25), +el.dataset.r], delay: anime.stagger(70), duration: 900, easing: 'easeOutElastic(1, .65)' });
     } else if (t.classList.contains('letter')) {
       anime({ targets: t, opacity: [0, 1], translateY: [90, 0], rotate: [-9, -1], duration: 1400, easing: 'easeOutElastic(1, .7)' });
-    } else if (t.id === 'coupons') {
-      anime({ targets: t.children, opacity: [0, 1], translateX: [-40, 0], delay: anime.stagger(120), duration: 700, easing: 'easeOutBack' });
+    } else if (t.id === 'ask') {
+      anime({ targets: t, opacity: [0, 1], scale: [.85, 1], duration: 900, easing: 'easeOutElastic(1, .6)' });
     }
   }), { threshold: .08 });
-  document.querySelectorAll('.ep, #board, .letter, #coupons').forEach(el => seen.observe(el));
+  document.querySelectorAll('.ep, #board, .letter, #ask').forEach(el => seen.observe(el));
 }
 
 /* tap anywhere for hearts */
