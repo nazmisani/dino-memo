@@ -109,7 +109,7 @@ h2{font:700 32px/1.05 var(--display);margin:0 0 8px;letter-spacing:-.01em}
 .slide .big{font:700 clamp(54px,16vw,86px)/.95 var(--display);margin:10px 0 14px;letter-spacing:-.02em}
 .slide .big.sm{font-size:clamp(34px,10vw,50px);line-height:1.05}
 .slide p{margin:0;font-size:18px;line-height:1.4;font-weight:600}
-.slide .ex{margin-top:18px;align-self:flex-start;background:rgba(0,0,0,.22);padding:8px 13px;border-radius:16px 16px 16px 4px;font-weight:700;font-size:15px}
+.slide .ex{margin-top:18px;align-self:flex-end;background:rgba(0,0,0,.22);padding:8px 13px;border-radius:16px 16px 4px 16px;font-weight:700;font-size:15px}
 .slide .ex.me{align-self:flex-end;border-radius:16px 16px 4px 16px}
 .s1{background:linear-gradient(160deg,#5b37c9,#2a1663)}
 .s2{background:linear-gradient(160deg,#ff7eb6,#7a2fd0)}
@@ -417,8 +417,8 @@ html:not(.anim) .orbit span{opacity:.8}
     <p class="sub">Semua pesan 7–8 Mei, apa adanya, typo-typonya juga. Coba <b>Putar Ulang</b> buat nonton chatnya kejadian lagi.</p>
     <div class="tg" id="tg">
       <div class="tg-head">
-        <div class="tg-av" aria-hidden="true">🌏💕</div>
-        <div><div class="tg-name">Dilaa</div><div class="tg-st" id="tgSt">senior · online</div></div>
+        <div class="tg-av" aria-hidden="true">🦖</div>
+        <div><div class="tg-name">Nouval</div><div class="tg-st" id="tgSt">junior · online</div></div>
       </div>
       <div class="tg-tools">
         <div class="srch">
@@ -685,9 +685,9 @@ function content(m) {
 }
 function msgHTML(m, first, last, withId) {
   const c = content(m);
-  const q = m.qs ? `<span class="q ${m.qs === 'M' ? 'qm' : 'qh'}"><b>${esc(NAME[m.qs])}</b><span>${esc(m.qt)}</span></span>` : '';
-  const cls = ['msg', m.me ? 'me' : 'her', c.cls, first ? 'first' : '', last ? 'last' : '', m.id === 22919 ? 'kepencet' : ''].filter(Boolean).join(' ');
-  const tick = m.me ? '<i class="tick">✓✓</i>' : '';
+  const q = m.qs ? `<span class="q ${m.qs === 'H' ? 'qm' : 'qh'}"><b>${esc(NAME[m.qs])}</b><span>${esc(m.qt)}</span></span>` : '';
+  const cls = ['msg', m.me ? 'her' : 'me', c.cls, first ? 'first' : '', last ? 'last' : '', m.id === 22919 ? 'kepencet' : ''].filter(Boolean).join(' ');
+  const tick = m.me ? '' : '<i class="tick">✓✓</i>';
   return `<div class="${cls}"${withId ? ` id="m${m.id}"` : ''} data-id="${m.id}"><div class="bub">${q}${c.html}<span class="meta">${m.t}${tick}</span></div></div>`;
 }
 function seqHTML(list, withId) {
@@ -761,7 +761,7 @@ $('#qDown').addEventListener('click', () => step(1));
 let rp = null, speed = 1;
 const st = $('#tgSt'), typing = $('#typing'), endEl = $('#tgEnd');
 function setStatus(isTyping) {
-  st.textContent = isTyping ? 'sedang mengetik…' : 'senior · online';
+  st.textContent = isTyping ? 'sedang mengetik…' : 'junior · online';
   st.classList.toggle('typing', isTyping);
 }
 function startReplay() {
@@ -786,7 +786,7 @@ function tick() {
   const isDate = !m;
   const len = m ? (m.x.startsWith('<') ? 14 : m.x.length) : 0;
   const base = isDate ? 500 : Math.min(2600, 520 + len * 30);
-  const showTyping = m && !m.me && speed < 20;
+  const showTyping = m && m.me && speed < 20;
   if (showTyping) { typing.hidden = false; setStatus(true); tb.scrollTop = tb.scrollHeight; }
   rp.timer = setTimeout(() => {
     if (!rp) return;
