@@ -1,0 +1,1092 @@
+<!doctype html>
+<html lang="id">
+<meta charset="utf-8">
+<title>Siap, Senior!</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.1.0/typed.umd.js"></script>
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#110d1d; --bg-2:#160f27; --panel:#1d1633; --panel-2:#261d42;
+  --line:rgba(255,255,255,.09); --text:#f4effe; --muted:#ada2cf; --faint:#7f749c;
+  --me:#6f49dc; --me-2:#9165f0; --her:#2b2348;
+  --pink:#ff8fc8; --yellow:#ffd36b; --mint:#86f0cc; --sky:#8fc7ff;
+  --q-me:#ffc9ec; --q-her:#94efcf;
+  --gl:max(16px, env(safe-area-inset-left, 0px));
+  --gr:max(16px, env(safe-area-inset-right, 0px));
+  --display:'Fredoka','Nunito',system-ui,sans-serif;
+  --body:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --hand:'Caveat','Fredoka',cursive;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html.locked{overflow:hidden}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 var(--body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* ---------- lock screen ---------- */
+#lock{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;overflow-y:auto;
+  padding:calc(env(safe-area-inset-top,0px) + 40px) var(--gr) calc(env(safe-area-inset-bottom,0px) + 24px) var(--gl);
+  background:radial-gradient(120% 70% at 15% 0%,#4d2b93 0%,transparent 60%),radial-gradient(100% 60% at 100% 100%,#8b2d6c 0%,transparent 62%),#120c22;
+  transition:transform .7s cubic-bezier(.7,0,.25,1),opacity .7s}
+#lock.open{transform:translateY(-105%);opacity:.3;pointer-events:none}
+.lk-lock{font-size:18px;opacity:.85}
+.lk-date{font-weight:700;color:rgba(255,255,255,.82);margin-top:6px}
+.lk-time{font:600 clamp(68px,22vw,100px)/1 var(--display);letter-spacing:-.02em}
+.notif{margin-top:26px;width:100%;max-width:370px;background:rgba(255,255,255,.13);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+  border-radius:22px;padding:12px 14px;display:flex;gap:12px;align-items:flex-start;animation:drop .7s .35s both;text-align:left}
+.notif .ic{width:38px;height:38px;border-radius:11px;background:linear-gradient(#3fb3e6,#1f93c6);display:grid;place-items:center;flex:none}
+.nt{min-width:0;flex:1}
+.nt-h{display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,.7)}
+.nt-h b{text-transform:uppercase;letter-spacing:.06em;font-weight:800}
+.nt-t{font-weight:800;margin-top:1px}
+.nt-b{font-size:15px}
+.nt-more{font-size:13px;color:rgba(255,255,255,.65);margin-top:2px}
+.lk-ask{margin-top:28px;font-weight:700}
+.dots{display:flex;gap:16px;margin:14px 0 4px}
+.dots i{width:13px;height:13px;border-radius:50%;border:1.6px solid #fff;transition:background .15s}
+.dots i.on{background:#fff}
+.dots.shake{animation:shake .42s}
+.lk-hint{font-size:13px;color:rgba(255,255,255,.7);min-height:20px;text-align:center}
+.lk-hint.bad{color:var(--yellow);font-weight:800}
+.pad{display:grid;grid-template-columns:repeat(3,auto);gap:14px clamp(16px,6vw,26px);margin-top:16px}
+.pad button{width:min(74px,20vw);height:min(74px,20vw);border-radius:50%;border:0;background:rgba(255,255,255,.14);font:600 28px var(--display);
+  display:grid;place-items:center;transition:background .12s,transform .12s;-webkit-tap-highlight-color:transparent}
+.pad button:active{background:rgba(255,255,255,.34);transform:scale(.94)}
+.pad button.ghost{background:none;font-size:22px}
+.pad span{visibility:hidden}
+@keyframes drop{from{opacity:0;transform:translateY(-16px) scale(.97)}}
+@keyframes shake{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+
+/* ---------- layout ---------- */
+.wrap{max-width:560px;margin:0 auto;padding:0 var(--gr) 0 var(--gl)}
+section{padding:56px 0 8px;scroll-margin-top:8px}
+.kicker{font:700 12px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--pink);margin:0 0 10px}
+h2{font:700 32px/1.05 var(--display);margin:0 0 8px;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 20px}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:92vh;min-height:92svh;display:flex;flex-direction:column;justify-content:center;padding:48px 0 32px;text-align:center}
+.hero h1{font:700 clamp(54px,17vw,88px)/.95 var(--display);margin:6px 0 16px;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--pink),var(--yellow));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{color:var(--muted);font-size:17px;max-width:420px;margin:0 auto}
+.duo{display:flex;align-items:center;justify-content:center;gap:14px;margin:30px 0 30px}
+.pp{display:flex;flex-direction:column;align-items:center;gap:2px;width:118px}
+.pp b{font-weight:800}
+.pp small{color:var(--faint);font-size:12.5px;font-weight:700}
+.av{width:74px;height:74px;border-radius:50%;display:grid;place-items:center;font-size:32px;margin-bottom:6px;box-shadow:0 8px 28px rgba(0,0,0,.35)}
+.av-me{background:linear-gradient(135deg,var(--me),var(--me-2))}
+.av-her{background:linear-gradient(135deg,#ff8fc8,#ffb86b);font-size:24px}
+.anni{align-self:center;display:inline-block;margin:0 0 16px;padding:7px 14px;border-radius:999px;background:linear-gradient(90deg,rgba(255,143,200,.22),rgba(255,211,107,.18));border:1px solid rgba(255,143,200,.4);font-weight:800;font-size:14px}
+.vs{font:700 18px var(--display);color:var(--yellow);transform:rotate(-8deg)}
+.cta{align-self:center;display:inline-flex;gap:8px;align-items:center;padding:14px 26px;border-radius:999px;background:var(--text);color:#1a1230;font-weight:800;text-decoration:none;box-shadow:0 10px 30px rgba(255,143,200,.25)}
+.floaties span{position:absolute;font-size:30px;opacity:.55;animation:float 7s ease-in-out infinite}
+.floaties span:nth-child(1){top:10%;left:4%}
+.floaties span:nth-child(2){top:16%;right:6%;animation-delay:-2s}
+.floaties span:nth-child(3){top:44%;left:-2%;animation-delay:-4s;font-size:24px}
+.floaties span:nth-child(4){top:52%;right:-1%;animation-delay:-1s}
+.floaties span:nth-child(5){bottom:9%;left:12%;animation-delay:-3s}
+.floaties span:nth-child(6){bottom:13%;right:12%;animation-delay:-5s;font-size:24px}
+@keyframes float{50%{transform:translateY(-14px) rotate(8deg)}}
+
+/* ---------- wrapped stories ---------- */
+.story{position:relative;height:min(600px,72vh);height:min(600px,72svh);min-height:440px;border-radius:28px;overflow:hidden;user-select:none;-webkit-user-select:none;cursor:pointer;
+  box-shadow:0 20px 50px rgba(0,0,0,.4);outline:none;-webkit-tap-highlight-color:transparent}
+.story:focus-visible{box-shadow:0 0 0 3px var(--yellow)}
+.bars{position:absolute;top:14px;left:14px;right:14px;display:flex;gap:4px;z-index:3}
+.bars i{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.3)}
+.bars i.on{background:#fff}
+.slide{position:absolute;inset:0;padding:54px 26px 56px;display:flex;flex-direction:column;justify-content:center;opacity:0;transform:scale(.97);transition:opacity .35s,transform .35s;pointer-events:none}
+.slide.on{opacity:1;transform:none}
+.slide .k{font-weight:800;font-size:13px;letter-spacing:.12em;text-transform:uppercase;opacity:.8}
+.slide .big{font:700 clamp(54px,16vw,86px)/.95 var(--display);margin:10px 0 14px;letter-spacing:-.02em}
+.slide .big.sm{font-size:clamp(34px,10vw,50px);line-height:1.05}
+.slide p{margin:0;font-size:18px;line-height:1.4;font-weight:600}
+.slide .ex{margin-top:18px;align-self:flex-start;background:rgba(0,0,0,.22);padding:8px 13px;border-radius:16px 16px 16px 4px;font-weight:700;font-size:15px}
+.slide .ex.me{align-self:flex-end;border-radius:16px 16px 4px 16px}
+.s1{background:linear-gradient(160deg,#5b37c9,#2a1663)}
+.s2{background:linear-gradient(160deg,#ff7eb6,#7a2fd0)}
+.s3{background:linear-gradient(160deg,#2c7be5,#3a1b8c)}
+.s4{background:linear-gradient(160deg,#3b8cff,#151b56)}
+.s5{background:linear-gradient(160deg,#ff9a3c,#c1306f)}
+.s6{background:linear-gradient(160deg,#1fae7a,#0e3f3a)}
+.s7{background:linear-gradient(160deg,#c77dff,#5a189a)}
+.s8{background:linear-gradient(160deg,#ffb347,#a83279)}
+.s9{background:linear-gradient(160deg,#1d2671,#c33764)}
+.s10{background:linear-gradient(160deg,#ff8fc8,#6f49dc)}
+.s11{background:linear-gradient(160deg,#ff5f9e,#ffb36b)}
+.ending .l1b{font:600 24px/1.3 var(--display);margin:14px 0 0;color:var(--pink)}
+.vsbar{margin-top:20px;display:grid;gap:10px}
+.vsbar div{display:grid;grid-template-columns:76px 1fr 46px;align-items:center;gap:10px;font-weight:800;font-size:14px}
+.vsbar span{height:14px;border-radius:7px;background:rgba(255,255,255,.9)}
+.vsbar div:nth-child(2) span{background:rgba(255,255,255,.55)}
+.tap{position:absolute;bottom:18px;left:0;right:0;text-align:center;font-size:13px;font-weight:700;opacity:.7}
+.snav{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:38px;height:38px;border-radius:50%;border:0;background:rgba(0,0,0,.25);display:none;place-items:center;font-size:18px}
+.snav.p{left:10px}.snav.n{right:10px}
+@media (hover:hover){.snav{display:grid}}
+
+/* ---------- episodes ---------- */
+.rail-wrap{position:relative}
+.eps{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px var(--gr) 18px var(--gl);margin:0 calc(-1 * var(--gr)) 0 calc(-1 * var(--gl));scrollbar-width:none;overscroll-behavior-x:contain}
+.eps::-webkit-scrollbar{display:none}
+.ep{flex:0 0 min(86%,400px);scroll-snap-align:center;background:var(--panel);border:1px solid var(--line);border-radius:26px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.ep-h{display:flex;align-items:center;gap:12px}
+.ep-e{width:46px;height:46px;border-radius:15px;background:var(--panel-2);display:grid;place-items:center;font-size:24px;flex:none}
+.ep-n{font-size:11.5px;font-weight:800;letter-spacing:.12em;color:var(--pink)}
+.ep-t{font:700 21px/1.1 var(--display)}
+.ep-s{color:var(--muted);font-size:14.5px;margin:0}
+.ep-chat{border-radius:18px;padding:6px 8px 10px;height:330px;overflow-y:auto;overscroll-behavior:contain}
+.ep-go{border:0;border-radius:14px;padding:11px;background:var(--panel-2);font-weight:800;font-size:14.5px}
+.ep-go:hover{background:#30254f}
+.rail-ctl{display:flex;justify-content:space-between;align-items:center;margin-top:-4px}
+.rail-ctl small{color:var(--faint);font-weight:700}
+.rail-ctl div{display:flex;gap:8px}
+.rbtn{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);font-size:18px}
+
+/* ---------- quotes board ---------- */
+.board{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.note{border:0;text-align:left;padding:14px 14px 12px;border-radius:6px 18px 18px 18px;color:#24183f;font:700 16.5px/1.3 var(--body);transform:rotate(var(--r,0deg));
+  box-shadow:0 8px 20px rgba(0,0,0,.3);transition:transform .2s;display:flex;flex-direction:column;justify-content:space-between;gap:10px;min-height:118px}
+.note:hover{transform:rotate(0) scale(1.03)}
+.note small{font-weight:800;font-size:11.5px;opacity:.6;letter-spacing:.02em}
+.note.h{background:#ffd8ec}
+.note.m{background:#dcd0ff;border-radius:18px 6px 18px 18px}
+.note.y{background:#ffe9a8}
+.note.g{background:#c8f5e3}
+.note.wide{grid-column:1 / -1}
+
+/* ---------- chat ---------- */
+.tg{border-radius:26px;overflow:hidden;border:1px solid var(--line);background:var(--bg-2);display:flex;flex-direction:column;
+  height:calc(100vh - 110px);height:calc(100dvh - 110px);min-height:460px;max-height:900px;scroll-margin-top:10px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.tg-head{display:flex;align-items:center;gap:11px;padding:10px 14px;background:#211939;border-bottom:1px solid var(--line)}
+.tg-av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#ff8fc8,#ffb86b);display:grid;place-items:center;font-size:17px;flex:none}
+.tg-name{font-weight:800;line-height:1.2}
+.tg-st{font-size:13px;color:var(--sky);line-height:1.2}
+.tg-st.typing{color:var(--mint)}
+.tg-tools{padding:8px 10px;display:flex;flex-direction:column;gap:8px;background:#1b1430;border-bottom:1px solid var(--line)}
+.srch{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.07);border-radius:12px;padding:0 6px 0 10px}
+.srch input{flex:1;min-width:0;background:none;border:0;color:var(--text);font:600 15px var(--body);padding:9px 0;outline:none}
+.srch input::placeholder{color:var(--faint)}
+.srch small{color:var(--muted);font-weight:700;white-space:nowrap;font-size:12.5px}
+.ib{width:32px;height:32px;border:0;border-radius:9px;background:none;font-size:15px;color:var(--muted);flex:none}
+.ib:hover{background:rgba(255,255,255,.08);color:var(--text)}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:999px;padding:6px 12px;font-weight:800;font-size:13px;white-space:nowrap}
+.chip.hot{background:linear-gradient(90deg,var(--pink),#ffad7a);color:#2a1235;border:0}
+.chip.on{background:var(--text);color:#1a1230}
+.rpbar{display:flex;align-items:center;gap:6px}
+.rpbar .when{margin-left:auto;font-size:12.5px;font-weight:800;color:var(--muted);white-space:nowrap}
+.tg-body{flex:1;overflow-y:auto;position:relative;padding:2px 10px 16px;overscroll-behavior:contain;
+  background:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1.4px) 0 0/20px 20px,radial-gradient(90% 60% at 100% 0%,rgba(145,101,240,.18),transparent 70%),radial-gradient(80% 60% at 0% 100%,rgba(255,143,200,.12),transparent 70%),#140e24}
+.tg-foot{display:flex;align-items:center;gap:10px;padding:9px 12px;background:#211939;border-top:1px solid var(--line);color:var(--faint);font-size:14.5px;font-weight:600}
+.tg-foot .fake{flex:1;background:rgba(255,255,255,.06);border-radius:18px;padding:8px 14px}
+.date{display:flex;justify-content:center;margin:12px 0 6px;position:sticky;top:6px;z-index:2;pointer-events:none}
+.date span{background:rgba(24,16,44,.8);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);padding:4px 12px;border-radius:12px;font-size:13px;font-weight:800}
+.sys{display:flex;justify-content:center;margin:18px 0 4px}
+.sys span{background:rgba(37,211,102,.14);color:#9cf3be;padding:6px 14px;border-radius:14px;font-size:13px;font-weight:800;text-align:center}
+
+/* bubbles (shared by chat + episodes) */
+.ep-chat{background:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1.4px) 0 0/20px 20px,#140e24}
+.msg{display:flex;padding:1px 0;scroll-margin:80px}
+.msg.me{justify-content:flex-end}
+.msg.first{margin-top:7px}
+.bub{max-width:80%;padding:6px 10px 6px 11px;position:relative;font-size:15.5px;line-height:1.36;overflow-wrap:anywhere;transition:box-shadow .3s}
+.her .bub{background:var(--her);border-radius:6px 17px 17px 6px}
+.her.first .bub{border-top-left-radius:17px}
+.her.last .bub{border-bottom-left-radius:4px}
+.me .bub{background:linear-gradient(135deg,var(--me),var(--me-2));border-radius:17px 6px 6px 17px}
+.me.first .bub{border-top-right-radius:17px}
+.me.last .bub{border-bottom-right-radius:4px}
+.meta{float:right;display:inline-flex;align-items:center;gap:3px;margin:8px -2px -4px 10px;font-size:11px;font-weight:600;color:rgba(255,255,255,.55);white-space:nowrap;line-height:1}
+.me .meta{color:rgba(255,255,255,.72)}
+.tick{font-style:normal;letter-spacing:-3px;color:#c9f1ff;padding-right:3px}
+.q{display:block;border-left:3px solid var(--q-her);background:rgba(255,255,255,.08);border-radius:5px 8px 8px 5px;padding:3px 8px 4px;margin:2px 0 4px;font-size:13.5px;line-height:1.25;max-width:100%}
+.q.qm{border-color:var(--q-me)}
+.q b{display:block;color:var(--q-her);font-size:12.5px;font-weight:800}
+.q.qm b{color:var(--q-me)}
+.q span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.82}
+.emo .bub,.stk .bub{background:none!important;padding:0}
+.emo .tx{font-size:46px;line-height:1.1}
+.emo .meta,.stk .meta{float:none;display:flex;width:max-content;margin:3px 0 0 auto;background:rgba(10,6,22,.55);padding:3px 7px;border-radius:10px}
+.her.emo .meta,.her.stk .meta{margin-left:0}
+.stk .q{background:var(--her)}
+.me.stk .q{background:var(--me)}
+.stk-art{width:116px;height:116px;display:grid;place-items:center;font-size:74px;line-height:1;border-radius:26px;background:rgba(255,255,255,.035)}
+.me .stk-art{margin-left:auto}
+.media{width:210px;max-width:100%;height:140px;border-radius:12px;margin:2px 0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.06) 0 10px,rgba(255,255,255,.02) 10px 20px);display:grid;place-content:center;text-align:center;gap:2px}
+.media b{font-size:30px}
+.media small{opacity:.65;font-size:12px}
+.vnote{width:140px;height:140px;border-radius:50%;background:conic-gradient(from 200deg,#9165f0,#ff8fc8,#ffd36b,#9165f0);padding:4px;margin-left:auto}
+.vnote div{width:100%;height:100%;border-radius:50%;background:#1d1535;display:grid;place-content:center;text-align:center}
+.vnote b{font-size:30px;line-height:1}
+.vnote small{font-size:11.5px;opacity:.7}
+.code{margin:2px 0 4px;font:12px/1.45 ui-monospace,Menlo,Consolas,monospace;background:rgba(0,0,0,.3);padding:8px 10px;border-radius:8px;white-space:pre;overflow-x:auto;max-width:100%}
+.note-s{display:block;font-size:11.5px;opacity:.7}
+.croc{cursor:pointer;display:inline-block;transition:transform .15s}
+.croc:hover{transform:scale(1.25) rotate(-10deg)}
+.kepencet .bub{cursor:pointer}
+.msg.glow .bub{animation:glow 2.6s ease-out}
+.msg.hit .bub{box-shadow:0 0 0 2px rgba(255,211,107,.55)}
+.msg.pop{animation:pop .28s ease-out}
+@keyframes glow{0%,55%{box-shadow:0 0 0 3px var(--yellow),0 0 26px rgba(255,211,107,.65)}100%{box-shadow:0 0 0 0 transparent}}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.97)}}
+.typing{display:flex;margin-top:7px}
+.typing .bub{background:var(--her);border-radius:17px 17px 17px 4px;padding:11px 14px;display:flex;gap:4px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:bl 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes bl{0%,60%,100%{opacity:.3;transform:none}30%{opacity:1;transform:translateY(-3px)}}
+
+/* ---------- ending ---------- */
+.ending{text-align:center;padding:30px 0 10px}
+.ending .l1{font:600 24px/1.3 var(--display);margin:0}
+.ending .l2{font:700 34px/1.1 var(--display);margin:14px 0 0;background:linear-gradient(90deg,var(--pink),var(--yellow));-webkit-background-clip:text;background-clip:text;color:transparent}
+.letter{margin:36px 0 0;background:#fbf4e6;color:#3a2b52;border-radius:6px;padding:26px 22px 24px;transform:rotate(-1deg);box-shadow:0 20px 40px rgba(0,0,0,.4);position:relative;
+  background-image:repeating-linear-gradient(transparent 0 31px,rgba(120,90,160,.16) 31px 32px);font:500 23px/32px var(--hand)}
+.letter::before{content:"";position:absolute;top:-12px;left:50%;width:110px;height:26px;transform:translateX(-50%) rotate(2deg);background:rgba(255,143,200,.55);border-radius:3px}
+.letter p{margin:0 0 32px}
+.letter p:last-child{margin:0}
+.letter .sig{text-align:right;font-weight:700}
+.coupons{display:grid;gap:12px;margin-top:6px}
+.cp{position:relative;display:flex;align-items:stretch;border:0;padding:0;text-align:left;border-radius:18px;background:linear-gradient(120deg,#2b2150,#3a2560);overflow:hidden;min-height:96px}
+.cp .ce{width:78px;flex:none;display:grid;place-items:center;font-size:36px;border-right:2px dashed rgba(255,255,255,.18);background:rgba(255,255,255,.04)}
+.cp .ct{padding:14px 16px;display:flex;flex-direction:column;justify-content:center;gap:2px}
+.cp .ct b{font:700 19px/1.15 var(--display)}
+.cp .ct small{color:var(--muted);font-size:14px;font-weight:600}
+.cp .ct i{font-style:normal;font-size:11.5px;font-weight:800;letter-spacing:.1em;color:var(--pink);margin-top:4px}
+.cp::before,.cp::after{content:"";position:absolute;left:69px;width:18px;height:18px;border-radius:50%;background:var(--bg)}
+.cp::before{top:-9px}.cp::after{bottom:-9px}
+.stamp{position:absolute;right:12px;top:50%;transform:translateY(-50%) rotate(-14deg) scale(1.6);opacity:0;border:3px solid var(--mint);color:var(--mint);font:700 16px var(--display);padding:3px 10px;border-radius:8px;transition:.3s cubic-bezier(.3,1.6,.5,1);pointer-events:none;background:rgba(17,13,29,.6)}
+.cp.used .stamp{opacity:1;transform:translateY(-50%) rotate(-14deg)}
+.cp.used .ct{opacity:.55}
+footer{text-align:center;color:var(--faint);font-size:13.5px;padding:46px 0 calc(110px + env(safe-area-inset-bottom,0px))}
+footer button{margin-top:12px;border:1px solid var(--line);background:none;border-radius:999px;padding:8px 16px;font-weight:700;color:var(--muted);font-size:13px}
+
+/* ---------- dock ---------- */
+.dock{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:50;display:flex;gap:2px;padding:5px;border-radius:999px;
+  background:rgba(32,23,56,.86);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid var(--line);box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.dock a{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:11px;font-weight:800;color:var(--muted);text-decoration:none;padding:5px 10px;border-radius:999px;min-width:62px}
+.dock a span{font-size:17px;line-height:1.2}
+.dock a.on{background:rgba(255,255,255,.12);color:var(--text)}
+html.locked .dock{display:none}
+
+/* ---------- fx ---------- */
+.fx{position:fixed;top:-70px;z-index:120;pointer-events:none;animation:fall var(--d,3s) linear forwards}
+@keyframes fall{to{transform:translateY(calc(100vh + 140px)) rotate(var(--r,0deg))}}
+.parade{position:fixed;left:100%;bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:120;pointer-events:none;animation:walk 5s linear forwards;display:flex;align-items:flex-end;gap:4px}
+.parade b{font-size:70px;line-height:1;display:block;animation:bob .35s ease-in-out infinite alternate}
+.parade span{background:#fff;color:#1a1230;font-weight:800;font-size:14px;padding:6px 10px;border-radius:14px 14px 14px 4px;margin-bottom:56px;white-space:nowrap}
+@keyframes walk{to{transform:translateX(calc(-100vw - 320px))}}
+@keyframes bob{to{transform:translateY(-6px) rotate(-4deg)}}
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 16px);transform:translate(-50%,-30px);opacity:0;z-index:130;background:#fff;color:#1a1230;font-weight:800;padding:10px 16px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.4);transition:.3s;pointer-events:none;max-width:calc(100vw - 32px);text-align:center;font-size:14.5px}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- mensiversary ---------- */
+#mensi{position:fixed;inset:0;z-index:110;display:flex;align-items:safe center;justify-content:center;overflow-y:auto;
+  padding:calc(env(safe-area-inset-top,0px) + 24px) var(--gr) calc(env(safe-area-inset-bottom,0px) + 24px) var(--gl);
+  background:radial-gradient(90% 55% at 50% 0%,rgba(255,95,158,.42),transparent 70%),radial-gradient(90% 55% at 50% 100%,rgba(111,73,220,.55),transparent 70%),rgba(14,9,26,.97);
+  transition:opacity .5s}
+#mensi.bye{opacity:0;pointer-events:none}
+.mensi-card{position:relative;width:100%;max-width:420px;text-align:center;padding:6px 2px;margin:auto}
+.mensi-k{display:inline-block;font-weight:800;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--pink);background:rgba(255,143,200,.12);border:1px solid rgba(255,143,200,.35);padding:6px 12px;border-radius:999px}
+.mensi-t{font:700 clamp(36px,11vw,52px)/1.04 var(--display);margin:16px 0 4px;letter-spacing:-.01em}
+.mensi-t .w{display:inline-block;white-space:nowrap}
+.mensi-t .ch{display:inline-block}
+.mensi-t .w2 .ch{background:linear-gradient(180deg,#ffc2e0,#ff5f9e);-webkit-background-clip:text;background-clip:text;color:transparent}
+.mensi-heart{position:relative;width:168px;height:150px;margin:6px auto 0;display:grid;place-items:center}
+.mensi-heart svg{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 10px 30px rgba(255,95,158,.55))}
+.mensi-heart b{position:relative;font:700 62px/1 var(--display);color:#fff;margin-top:-14px}
+.mensi-heart small{position:absolute;bottom:38px;left:0;right:0;font-weight:800;font-size:14px;color:#fff}
+.mensi-msg{font-size:17px;line-height:1.55;font-weight:600;min-height:10.5em;margin:14px 0 0;text-align:left;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:20px;padding:16px 18px}
+.mensi-msg b{color:var(--yellow)}
+.typed-cursor{color:var(--pink);font-weight:700}
+.mensi-sig{font:700 27px var(--hand);color:var(--yellow);margin:10px 4px 0;opacity:0;text-align:right}
+.mensi-go{margin-top:16px;border:0;border-radius:999px;padding:14px 24px;background:linear-gradient(90deg,var(--pink),#ffad7a);color:#2a1235;font-weight:800;font-size:16px;box-shadow:0 10px 30px rgba(255,143,200,.35);opacity:0}
+.orbit{position:absolute;inset:0;pointer-events:none}
+.orbit span{position:absolute;font-size:22px;opacity:0;transform-origin:center}
+html:not(.anim) .orbit span{opacity:.8}
+
+/* ---------- extra fun ---------- */
+.hero h1 .ch{display:inline-block}
+.hero h1 em.split{background:none;color:inherit}
+.hero h1 em .ch{background:linear-gradient(90deg,var(--pink),var(--yellow));-webkit-background-clip:text;background-clip:text;color:transparent}
+.vs{display:flex;flex-direction:column;align-items:center;gap:4px}
+.beat{display:inline-block;font-size:22px;animation:beat 1.3s ease-in-out infinite}
+@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.28)}30%{transform:scale(1)}45%{transform:scale(1.16)}}
+.cta{animation:nudge 2.4s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateY(5px)}}
+.vsbar span{transform-origin:left center}
+.pop-heart{position:fixed;z-index:115;pointer-events:none;font-size:26px;will-change:transform,opacity}
+.anim .floaties span{animation:none}
+.anim .ep-chat .msg,.anim .note,.anim .letter,.anim #coupons .cp{opacity:0}
+</style>
+
+<div id="lock" role="dialog" aria-modal="true" aria-label="Layar kunci">
+  <div class="lk-lock" aria-hidden="true">🔒</div>
+  <div class="lk-date">Kamis, 7 Mei</div>
+  <div class="lk-time">07:47</div>
+  <div class="notif">
+    <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><path fill="#fff" d="M21.4 3.7 2.9 10.9c-1.2.5-1.2 1.2-.2 1.5l4.7 1.5 1.8 5.5c.2.6.1.9.8.9.5 0 .7-.2 1-.5l2.3-2.2 4.8 3.5c.9.5 1.5.2 1.7-.8l3.1-14.7c.3-1.3-.5-1.9-1.5-1.4zM8.7 13.6l9.2-5.8c.5-.3.8-.1.5.2l-7.8 7.1-.3 3.3-1.6-4.8z"/></svg></div>
+    <div class="nt">
+      <div class="nt-h"><b>Telegram</b><span>sekarang</span></div>
+      <div class="nt-t">Nouval</div>
+      <div class="nt-b">hii salam kenal yaa</div>
+    </div>
+  </div>
+  <div class="lk-ask">Masukin kode buat buka</div>
+  <div class="dots" id="lkDots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <div class="lk-hint" id="lkHint" aria-live="polite">petunjuk: hari pertama kita kenal</div>
+  <div class="pad" id="lkPad">
+    <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>
+    <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button>
+    <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button>
+    <span></span><button data-k="0">0</button><button class="ghost" data-k="del" aria-label="hapus">⌫</button>
+  </div>
+</div>
+
+<div id="mensi" hidden role="dialog" aria-modal="true" aria-labelledby="mensiT">
+  <div class="mensi-card">
+    <div class="orbit" id="orbit" aria-hidden="true"></div>
+    <div class="mensi-k" id="mensiK">since 31 Mei 2026</div>
+    <h2 class="mensi-t" id="mensiT">Happy Mensiversary, Sayanggg!</h2>
+    <div class="mensi-heart" id="mensiHeart" aria-hidden="true">
+      <svg viewBox="0 0 100 90"><defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9fd0"/><stop offset="1" stop-color="#ff4f8b"/></linearGradient></defs><path fill="url(#hg)" d="M50 86C22 64 4 48 4 28 4 14 15 4 28 4c9 0 17 5 22 13C55 9 63 4 72 4c13 0 24 10 24 24 0 20-18 36-46 58z"/></svg>
+      <b id="mensiNum">5</b><small id="mensiUnit">bulan</small>
+    </div>
+    <p class="mensi-msg"><span id="mensiTyped"></span></p>
+    <p class="mensi-sig" id="mensiSig">— Nouval 🦖</p>
+    <button class="mensi-go" id="mensiGo">lanjut liat kenangan kita →</button>
+  </div>
+</div>
+
+<main class="wrap">
+  <header class="hero" id="top">
+    <div class="floaties" aria-hidden="true"><span>🐊</span><span>😭</span><span>👑</span><span>🍜</span><span>🛵</span><span>💜</span></div>
+    <div class="anni" id="anni">💜 since 31 Mei 2026</div>
+    <p class="kicker">arsip chat pertama · 7–8 Mei 2026</p>
+    <h1>Siap, <em>Senior!</em></h1>
+    <p class="lede"><span id="heroCount">1.653</span> pesan Telegram yang udah kehapus di HP senior. Junior simpan ulang di sini, biar ga ilang lagi.</p>
+    <div class="duo">
+      <div class="pp"><div class="av av-me">🦖</div><b>Nouval</b><small>junior · 2005</small></div>
+      <div class="vs"><span class="beat" aria-hidden="true">💜</span>vs</div>
+      <div class="pp"><div class="av av-her">🌏💕</div><b>Dilaa</b><small>senior · 2007</small></div>
+    </div>
+    <a class="cta" href="#wrapped">Mulai ↓</a>
+  </header>
+
+  <section id="wrapped">
+    <p class="kicker">bagian 1</p>
+    <h2>Wrapped 35 Jam</h2>
+    <p class="sub">Rekap chat pertama, versi statistik. Ketuk kanan buat lanjut, kiri buat balik.</p>
+    <div class="story" id="story" tabindex="0" role="region" aria-roledescription="carousel" aria-label="Rekap chat">
+      <div class="bars" id="storyBars"></div>
+      <div id="storySlides"></div>
+      <button class="snav p" id="storyPrev" aria-label="sebelumnya">‹</button>
+      <button class="snav n" id="storyNext" aria-label="berikutnya">›</button>
+      <div class="tap" id="storyTap">ketuk buat lanjut ›</div>
+    </div>
+  </section>
+
+  <section id="episode">
+    <p class="kicker">bagian 2</p>
+    <h2>Episode-Episode Lucu</h2>
+    <p class="sub">Geser buat ganti episode. Tombol di bawah tiap kartu bawa kamu ke chat aslinya.</p>
+    <div class="rail-wrap">
+      <div class="eps" id="eps"></div>
+      <div class="rail-ctl"><small id="epCount"></small><div><button class="rbtn" id="epPrev" aria-label="episode sebelumnya">‹</button><button class="rbtn" id="epNext" aria-label="episode berikutnya">›</button></div></div>
+    </div>
+  </section>
+
+  <section id="mutiara">
+    <p class="kicker">bagian 3</p>
+    <h2>Kata-Kata Mutiara</h2>
+    <p class="sub">Kalimat yang pantas dipajang. Ketuk buat lihat konteksnya.</p>
+    <div class="board" id="board"></div>
+  </section>
+
+  <section id="chat">
+    <p class="kicker">bagian 4</p>
+    <h2>Chat Lengkapnya</h2>
+    <p class="sub">Semua pesan 7–8 Mei, apa adanya, typo-typonya juga. Coba <b>Putar Ulang</b> buat nonton chatnya kejadian lagi.</p>
+    <div class="tg" id="tg">
+      <div class="tg-head">
+        <div class="tg-av" aria-hidden="true">🌏💕</div>
+        <div><div class="tg-name">Dilaa</div><div class="tg-st" id="tgSt">senior · online</div></div>
+      </div>
+      <div class="tg-tools">
+        <div class="srch">
+          <span aria-hidden="true">🔎</span>
+          <input id="q" type="search" placeholder="Cari di chat… (coba: buaya)" autocomplete="off" aria-label="Cari di chat">
+          <small id="qCount"></small>
+          <button class="ib" id="qUp" aria-label="hasil sebelumnya">▲</button>
+          <button class="ib" id="qDown" aria-label="hasil berikutnya">▼</button>
+        </div>
+        <div class="chips" id="chips">
+          <button class="chip hot" id="rpStart">▶ Putar Ulang</button>
+          <button class="chip" data-jump="20828">☀️ Pagi 7 Mei</button>
+          <button class="chip" data-jump="21464">🌙 Malam 7 Mei</button>
+          <button class="chip" data-jump="22303">📅 Jumat 8 Mei</button>
+          <button class="chip" data-jump="22924">⬇️ Pesan terakhir</button>
+        </div>
+        <div class="rpbar" id="rpBar" hidden>
+          <button class="chip hot" id="rpStop">■ Stop</button>
+          <button class="chip on" data-speed="1">1×</button>
+          <button class="chip" data-speed="5">5×</button>
+          <button class="chip" data-speed="20">20×</button>
+          <span class="when" id="rpWhen"></span>
+        </div>
+      </div>
+      <div class="tg-body" id="tgBody">
+        <div id="tgList"></div>
+        <div class="typing" id="typing" hidden><div class="bub" aria-label="sedang mengetik"><i></i><i></i><i></i></div></div>
+        <div class="sys" id="tgEnd"><span>💚 obrolan pindah ke WhatsApp</span></div>
+      </div>
+      <div class="tg-foot"><span aria-hidden="true">😊</span><div class="fake">chat ini udah pindah ke WA 😌</div><span aria-hidden="true">🎤</span></div>
+    </div>
+  </section>
+
+  <section id="penutup">
+    <div class="ending">
+      <p class="l1">…dan jam 19:02, obrolannya pindah ke WhatsApp.</p>
+      <p class="l1b">23 hari kemudian, tanggal 31 Mei, junior &amp; senior jadian.</p>
+      <p class="l2">Sisanya, kalian sudah tahu. 💜</p>
+    </div>
+    <div class="letter">
+      <p>Buat senior,</p>
+      <p id="letterAnni">Happy anniversary, sayang. 💜</p>
+      <p>Inget ga, semuanya mulai dari “Hai! Aku dari Leomatchbot ✨”, pesan pembuka paling template sedunia. Abis itu aku nebak kamu anak DKV (salah), kamu nuduh aku buaya berkali-kali, aku hampir dijual ke Kamboja, terus kita sama-sama lupa waktu sampai jam 11 malam.</p>
+      <p>Chatnya udah kehapus di HP kamu, jadi aku simpan di sini. Semua typo-nya, semua 😭-nya, semua CAPSLOCK-nya.</p>
+      <p>Makasih udah bales “haai salam kenal juga kakk” hari itu, dan makasih udah jadi pacar aku sejak 31 Mei.</p>
+      <p class="sig">— junior kamu,<br>yang tingginya bukan 130 🦖</p>
+    </div>
+    <section style="padding-top:48px">
+      <p class="kicker">bonus</p>
+      <h2>Kupon Senior</h2>
+      <p class="sub">Berlaku seumur hidup. Ketuk kupon, terus tunjukin ke junior buat ditukar.</p>
+      <div class="coupons" id="coupons"></div>
+    </section>
+  </section>
+
+  <footer>
+    dibikin dari <span id="ftCount">1.653</span> pesan, <span id="ftCry">234</span> 😭, dan satu sumpah “deni tahun”.<br>
+    <button id="relock">🔒 kunci lagi</button>
+  </footer>
+</main>
+
+<nav class="dock" id="dock" aria-label="Navigasi">
+  <a href="#wrapped" data-s="wrapped"><span>✨</span>Wrapped</a>
+  <a href="#episode" data-s="episode"><span>🎬</span>Episode</a>
+  <a href="#chat" data-s="chat"><span>💬</span>Chat</a>
+  <a href="#penutup" data-s="penutup"><span>💌</span>Penutup</a>
+</nav>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+const RAW = [[20828,1,7,"07:47","Hai! Aku dari Leomatchbot ✨","",""],[20829,1,7,"07:47","hii","",""],[20830,1,7,"07:48","salam kenal yaa","",""],[20831,0,7,"07:51","haai salam kenal juga kakk","",""],[20832,1,7,"07:53","kamu asli serang?","",""],[20833,0,7,"08:29","aku kosst kak","",""],[20834,1,7,"08:30","oohhh","",""],[20835,1,7,"08:30","rantau yaa","",""],[20836,1,7,"08:30","samaa dong","",""],[20837,0,7,"08:30","WKWKWK iyaaa","M","rantau yaa"],[20838,0,7,"08:30","emg kakak asli mana?","M","samaa dong"],[20839,1,7,"08:30","tangerang","H","emg kakak asli mana?"],[20840,1,7,"08:30","kesini kerjaa","",""],[20841,1,7,"08:30","klo kamu?","",""],[20842,0,7,"08:31","SAMA WKWKWK","",""],[20843,0,7,"08:31","aku kuliaah sih kak..","M","kesini kerjaa"],[20845,1,7,"08:32","tangerang mana?","H","SAMA WKWKWK"],[20846,1,7,"08:32","kuliah di mana?","H","aku kuliaah sih kak.."],[20847,0,7,"08:35","tebaak","M","kuliah di mana?"],[20848,0,7,"08:35","di ini cisauk taau ga?","M","tangerang mana?"],[20849,1,7,"08:36","untirta?","H","tebaak"],[20850,1,7,"08:36","tauuu","H","di ini cisauk taau ga?"],[20851,1,7,"08:36","temen ku ada yg rumahnya di situ","",""],[20852,1,7,"08:36","aku di alam sutera","",""],[20855,0,7,"08:49","ohh lumayaan","M","aku di alam sutera"],[20856,1,7,"09:06","iyaa","",""],[20857,0,7,"09:06","ohyaa??","M","temen ku ada yg rumahnya di situ"],[20858,0,7,"09:06","benerr hehe keren","M","untirta?"],[20859,1,7,"09:06","ihh deket dongg","H","benerr hehe keren"],[20860,1,7,"09:07","paling gk sampe 10 menit aku ke untirta","",""],[20862,1,7,"09:08","mau mut ig gaa?","",""],[20865,0,7,"09:19","oh iyaaa??","M","paling gk sampe 10 menit aku ke untirta"],[20866,0,7,"09:19","boleeh, [ig disensor 🙈]","M","mau mut ig gaa?"],[20867,1,7,"09:27","iyaaa","H","oh iyaaa??"],[20868,1,7,"09:27","okayy","H","boleeh, [ig disensor 🙈]"],[20869,1,7,"09:27","lhaa kamu kenal sama naswan","",""],[20895,1,7,"09:32","udh ku follow ya","",""],[20897,0,7,"11:06","oh iyaa??? kayanya moots dari sini juga deh aku ga ngeh kak","M","lhaa kamu kenal sama naswan"],[20898,1,7,"12:00","oalahh","",""],[20899,1,7,"12:00","dia temen SMP aku","",""],[20900,1,7,"12:26","kamu maba ya","",""],[20910,0,7,"13:32","IYAA WKWJWKW","",""],[20911,0,7,"13:33","semester 2 aku","",""],[20912,1,7,"13:34","wihhh","",""],[20913,1,7,"13:34","seru gak kuliah","",""],[20914,0,7,"13:34","awal awal seru sih kakk","",""],[20915,0,7,"13:34","tapi homesick gituu huhu","",""],[20916,0,7,"13:35","kakak gimana enak pasti kerjaa","",""],[20917,1,7,"13:35","sekarang dah pusing yaa","H","awal awal seru sih kakk"],[20918,1,7,"13:35","seruu","H","kakak gimana enak pasti kerjaa"],[20919,1,7,"13:35","tapi pas gajian doang serunyaa","",""],[20920,1,7,"13:35","wkwk","",""],[20921,1,7,"13:35","sisanya pusing","",""],[20922,0,7,"13:36","HSHAHAHA YA KANN","M","tapi pas gajian doang serunyaa"],[20923,0,7,"13:36","bisa jajaan sepuasnya pastii","",""],[20924,1,7,"13:36","iyaaa","",""],[20925,1,7,"13:36","alhamdulliah","H","bisa jajaan sepuasnya pastii"],[20926,0,7,"13:36","lumayaan....","M","sekarang dah pusing yaa"],[20927,1,7,"13:36","tpi sekarang lagi gk terlalu banyk si kerjaannya","",""],[20928,1,7,"13:37","jurusan apa kalo boleh tau","H","lumayaan...."],[20929,0,7,"13:37","apa tebakk","M","jurusan apa kalo boleh tau"],[20931,1,7,"13:40","seni","",""],[20932,1,7,"13:40","dkv","",""],[20933,1,7,"13:40","soalnya kamu estetikk wkwk","",""],[21128,0,7,"16:14","HAH BUKANNN","",""],[21139,0,7,"16:14","agribisnis akuu WKWKKWW","",""],[21150,1,7,"16:14","ooohhh","",""],[21151,1,7,"16:14","kirainn wkwk","",""],[21152,1,7,"16:15","kamu masih di kampus?","",""],[21153,0,7,"16:15","sudaa di kosst","",""],[21154,0,7,"16:16","kakak kerja di daerah mana emg??","",""],[21155,1,7,"16:16","dekett kamu","",""],[21156,0,7,"16:16","pakupatan??","",""],[21157,1,7,"16:16","domino pizza tau?","",""],[21158,1,7,"16:16","deket perempatan","",""],[21159,0,7,"16:16","ohhh yg lampu merah bukann","M","domino pizza tau?"],[21160,1,7,"16:16","yesss","",""],[21161,0,7,"16:17","trs kakakk ga pulang ke alsut??","",""],[21162,1,7,"16:17","jarangg","",""],[21163,1,7,"16:17","pantang pulang sebelum kayaa","",""],[21164,1,7,"16:17","wkwk","",""],[21165,0,7,"16:17","WKWKWKW","",""],[21166,1,7,"16:17","april ga pulang samsek","",""],[21167,0,7,"16:17","ga homesick kah kakk","",""],[21168,1,7,"16:17","bulan ini kyknya pas idul adha pulabg","",""],[21169,1,7,"16:18","engga","H","ga homesick kah kakk"],[21170,1,7,"16:18","udh biasaa","",""],[21171,1,7,"16:18","aku dulu pesantren","",""],[21172,1,7,"16:19","mau pulng ke kos plisss😭😭","",""],[21173,1,7,"16:19","nunggu rapat selesai padahal aku ga ikut rapat","",""],[21174,0,7,"16:19","yeaah... siapa yg ga pulang kak...","M","bulan ini kyknya pas idul adha pulabg"],[21175,0,7,"16:19","oh iyaa?? di tangerang??","M","aku dulu pesantren"],[21176,1,7,"16:19","temen aku banyak kayaknya","H","yeaah... siapa yg ga pulang kak..."],[21177,1,7,"16:19","banyak yg nonis disini","",""],[21178,0,7,"16:20","semangaat HSHAHHAA","M","nunggu rapat selesai padahal aku ga ikut"],[21179,1,7,"16:20","rumahnya jauh²","",""],[21180,1,7,"16:20","iyaa","H","oh iyaa?? di tangerang??"],[21181,1,7,"16:20","betee","H","semangaat HSHAHHAA"],[21182,1,7,"16:20","rebahan doang di sini","",""],[21183,0,7,"16:20","oalaaah... iya iyaa i see","M","banyak yg nonis disini"],[21184,0,7,"16:21","atleastt rebahan kak","M","rebahan doang di sini"],[21185,1,7,"16:21","enakan di kasurr","H","atleastt rebahan kak"],[21186,1,7,"16:21","kangen kasurr","",""],[21187,0,7,"16:21","emg kalo kerjaa pulang jam berapa kak??","",""],[21188,1,7,"16:21","jam 4","",""],[21189,1,7,"16:21","8-4","",""],[21190,0,7,"16:22","LAHH UDH LEWAT","",""],[21191,1,7,"16:22","iyaa makanyyaa","",""],[21192,1,7,"16:22","finger printnya di ruang rapatt","",""],[21193,0,7,"16:22","ituu sabtu minggu libur???","",""],[21194,1,7,"16:22","absensi","M","finger printnya di ruang rapatt"],[21195,1,7,"16:22","gak enak klo pulang dluan","",""],[21196,1,7,"16:22","sabtu masuk setengah hari","H","ituu sabtu minggu libur???"],[21197,0,7,"16:22","iyaaa i seee sabar yah","M","absensi"],[21198,1,7,"16:23","😭😭😭😭","H","iyaaa i seee sabar yah"],[21199,1,7,"16:23","Ga sabarr","",""],[21200,1,7,"16:23","mau pulang","",""],[21201,1,7,"16:23","lapar","",""],[21202,0,7,"16:23","emg lamaa kak??....","",""],[21203,0,7,"16:23","kasian bgt HSHAHA","",""],[21204,1,7,"16:23","lamaa","",""],[21205,1,7,"16:23","🥲🥲🥲","H","kasian bgt HSHAHA"],[21206,1,7,"16:23","ehh temen ku ada tau yg di untirtaa","",""],[21207,1,7,"16:23","anak sejarah diaa","",""],[21208,0,7,"16:24","ohhh fkip yaa??","",""],[21209,0,7,"16:24","di ciwaru itu kampusnyaa","",""],[21210,1,7,"16:24","emm pendidikan sejarah","",""],[21211,0,7,"16:24","beda kampuss","",""],[21212,0,7,"16:24","KEPALA AKU PUSING BGT","",""],[21213,1,7,"16:24","ohh iya kah","H","beda kampuss"],[21214,1,7,"16:25","kenapaa","H","KEPALA AKU PUSING BGT"],[21215,1,7,"16:25","banyak tugas kampus?","",""],[21237,0,7,"16:27","nopee","M","banyak tugas kampus?"],[21238,0,7,"16:27","kayanyaa kehujanann tadi","",""],[21239,1,7,"16:28","hahh emg tadi ujan yaa","",""],[21240,1,7,"16:28","kasian nyaa","",""],[21241,0,7,"16:35","hujann kak di sindang sarii","M","hahh emg tadi ujan yaa"],[21242,0,7,"16:35","sampe pakup panass bgt tapi","",""],[21243,0,7,"16:35","emaang 😔","M","kasian nyaa"],[21244,1,7,"16:37","di sini panass lhoo","H","hujann kak di sindang sarii"],[21245,1,7,"16:38","ohh kamu untirta yg di sindang sari?","",""],[21246,0,7,"16:40","2 2 nyaaa","M","ohh kamu untirta yg di sindang sari?"],[21247,0,7,"16:40","cuma banyakan di pakup sih","",""],[21248,1,7,"16:41","oohhhh","",""],[21249,1,7,"16:41","kosnya di mana?","",""],[21250,0,7,"16:42","pakupatannnn kakakk","M","kosnya di mana?"],[21251,0,7,"16:43","kak, udh lama di sini??","",""],[21252,1,7,"16:43","oohhh","H","pakupatannnn kakakk"],[21253,1,7,"16:43","jauhhh dongg","",""],[21254,1,7,"16:43","dah dari February","H","kak, udh lama di sini??"],[21255,0,7,"16:43","2026?","M","dah dari February"],[21256,0,7,"16:43","yaallah lamaan aku","",""],[21257,0,7,"16:44","emg kakak dimana?","M","jauhhh dongg"],[21258,1,7,"16:49","iyaaa","H","2026?"],[21259,1,7,"16:54","deket mcd perempatan","H","emg kakak dimana?"],[21260,1,7,"16:54","gajauh dari kantor ku","",""],[21261,1,7,"16:54","sumurpecung nama daerahnya","",""],[21262,1,7,"16:59","iyaa makanya masih g tau daerah sini","H","yaallah lamaan aku"],[21263,0,7,"17:01","kaciaan newbie","M","iyaa makanya masih g tau daerah sini"],[21264,0,7,"17:01","oalaahhh..","M","deket mcd perempatan"],[21265,1,7,"17:07","wkwkwkw","H","kaciaan newbie"],[21266,1,7,"17:07","iyaaa","",""],[21267,1,7,"17:07","aku juga ga tau tempat² bagus di sini","",""],[21268,1,7,"17:07","paling cuma 527","",""],[21269,0,7,"17:25","sangaat priceeyy","M","paling cuma 527"],[21270,0,7,"17:26","buat anak kost kaya akuu yh","",""],[21271,1,7,"17:26","boleh kapan² kesana","",""],[21272,1,7,"17:26","yang murah dimana emg?","H","sangaat priceeyy"],[21273,0,7,"17:27","dimanaa yaah","M","yang murah dimana emg?"],[21274,1,7,"17:27","makanannya enak² tauu","H","sangaat priceeyy"],[21275,0,7,"17:27","warning muraah","",""],[21276,1,7,"17:27","pasta sama mix platternya enakk","",""],[21277,0,7,"17:27","IYAAA","M","makanannya enak² tauu"],[21278,0,7,"17:27","temen aku bilaang","",""],[21279,1,7,"17:27","ohh tauu","H","warning muraah"],[21280,1,7,"17:27","deket kos ku dlu","",""],[21281,1,7,"17:27","iyaa","H","IYAAA"],[21282,0,7,"17:28","kakak tau ini gasih","",""],[21283,0,7,"17:28","pontir","",""],[21284,1,7,"17:28","tak tauu","",""],[21285,0,7,"17:28","aduhh lupa newbie","M","tak tauu"],[21286,1,7,"17:28","😭😭😭","H","aduhh lupa newbie"],[21287,1,7,"17:28","jahat","",""],[21288,0,7,"17:28","HSHAHAHAA","",""],[21289,0,7,"17:28","apa yaa perasaan dekeet situu","",""],[21290,1,7,"17:28","apa itu","",""],[21291,0,7,"17:29","kayaa foodcourt gituu trs disitu ada ini bakmie jaksell enak bgtt","",""],[21292,1,7,"17:29","bakmi jaksell","H","kayaa foodcourt gituu trs disitu ada ini"],[21293,1,7,"17:29","kalcer parah yee wkwkw","",""],[21294,0,7,"17:30","NGAKAK ENGGAA","",""],[21295,1,7,"17:30","<photo>","",""],[21296,1,7,"17:30","ini kah??","",""],[21297,0,7,"17:31","iyaaa deket kan dr kakak??","",""],[21298,1,7,"17:31","liat itu berapa menit","M","Photo"],[21299,1,7,"17:32","klo naik motor","",""],[21300,1,7,"17:32","dari kos ku","",""],[21301,0,7,"17:32","jalan juga nyampee itu","",""],[21302,1,7,"17:32","wkwk iyaa deket bangettt","",""],[21303,1,7,"17:32","baru sadar ada ituu","",""],[21304,0,7,"17:32","iyaaa wajar kan newbiee","M","baru sadar ada ituu"],[21305,1,7,"17:32","😭😭😭😭","H","iyaaa wajar kan newbiee"],[21306,1,7,"17:33","siap seniorr","",""],[21307,0,7,"17:33","HAHAHAHA STOP","M","siap seniorr"],[21308,1,7,"17:33","wkwkw","",""],[21309,1,7,"17:34","kapan² ke situ yuu","",""],[21310,1,7,"17:34","atau 527","",""],[21311,0,7,"17:37","bolehh","",""],[21312,1,7,"17:38","gasss","",""],[21313,1,7,"17:40","btw kamu kelahiran taun berapa?","",""],[21314,1,7,"17:40","klo bole tau","",""],[21315,0,7,"17:40","kaakak berapa","",""],[21316,0,7,"17:41","akuu line 07","",""],[21317,1,7,"17:41","2005","",""],[21318,1,7,"17:41","bocill","H","akuu line 07"],[21319,0,7,"17:53","BEDA 2 TAHUN DOANG KAK 😡😡😡","M","2005"],[21320,0,7,"17:53","tapi kan kalo di serang aku jd senior kakak","",""],[21321,0,7,"17:53","<sticker>","",""],[21322,1,7,"17:53","tetep aja bocilll","",""],[21323,1,7,"17:53","😭😭😭","H","tapi kan kalo di serang aku jd senior ka"],[21324,1,7,"17:53","siap seniorr","",""],[21325,1,7,"17:54","emg kamu dah Dari bulan apa disini","",""],[21326,0,7,"17:54","daari mabaa tahun kemarin","",""],[21327,0,7,"17:54","agustuss","",""],[21328,1,7,"17:56","seniorr","",""],[21329,1,7,"17:56","seru yaa kuliahh","",""],[21330,1,7,"17:57","aku juga di suru kuliah nii","",""],[21331,1,7,"17:57","sama ortu ku","",""],[21332,0,7,"17:57","YES KULIAH KAK AYO","",""],[21333,0,7,"17:57","biar aku jadi senior beneraan 😝😝😝","",""],[21334,1,7,"17:57","iyaa yg bisa sambil kerjaa","",""],[21335,1,7,"17:57","nanti kamu ospek akuu wkwkwk","H","biar aku jadi senior beneraan 😝😝😝"],[21336,0,7,"17:58","sure","M","nanti kamu ospek akuu wkwkwk"],[21337,0,7,"17:58","<sticker>","",""],[21338,1,7,"17:58","tidak fantashhh","",""],[21339,0,7,"17:58","siap menjadi kating yg baik","",""],[21340,1,7,"17:58","aku nyari yg bisa sambil kerjaa","",""],[21341,1,7,"17:58","kayaknya aku ambil uph deh","",""],[21342,0,7,"17:58","berartii kelas karyawann","M","iyaa yg bisa sambil kerjaa"],[21343,0,7,"17:59","tapi keren deh kalo beneran mau kuliah juga","",""],[21344,1,7,"17:59","iyaa","H","berartii kelas karyawann"],[21345,0,7,"17:59","biasanya kalo udh kerjaa udh males gitu kuliah lagii","",""],[21346,1,7,"17:59","uph ada kelas karyawan","",""],[21347,1,7,"17:59","kalo gk di paksa ortu aku juga ga mau😭😭","H","biasanya kalo udh kerjaa udh males gitu "],[21348,0,7,"17:59","laaah balik kerumah dong","M","uph ada kelas karyawan"],[21349,1,7,"17:59","full online dia","H","laaah balik kerumah dong"],[21350,1,7,"18:00","kalo gk binus","",""],[21351,0,7,"18:00","oh iyaaa??","M","full online dia"],[21352,1,7,"18:00","masi bingung sii","",""],[21353,1,7,"18:00","iyaa","H","oh iyaaa??"],[21354,0,7,"18:00","<sticker>","M","masi bingung sii"],[21355,1,7,"18:00","tapi klo dari segi fleksibel masih menang UPH","",""],[21356,0,7,"18:00","bingungnya uph binus","",""],[21357,0,7,"18:00","sambil merem juga aku mau kak","",""],[21358,1,7,"18:01","bingung lahh😭😭","H","sambil merem juga aku mau kak"],[21359,1,7,"18:01","klo nanti gak sanggup karena gak ada waktu kan rugii","",""],[21360,0,7,"18:01","yaudaah uph ajaa","M","tapi klo dari segi fleksibel masih menan"],[21361,0,7,"18:01","emg mau ambil prodi apaa?","",""],[21362,1,7,"18:01","bisnis digitall","",""],[21363,1,7,"18:01","biar bisa bangun start up wkwk","",""],[21364,1,7,"18:02","jadi ceo menyamar","",""],[21365,0,7,"18:03","baguss kak lanjutinn yaah","",""],[21366,0,7,"18:03","nanti ajarin aku bisnis juga","",""],[21367,0,7,"18:03","<sticker>","",""],[21368,1,7,"18:03","kamu yg ajarin akuu","",""],[21369,1,7,"18:03","kan seniorr","",""],[21370,0,7,"18:03","STOP GAAAK","M","kan seniorr"],[21371,1,7,"18:04","wkwkwk","",""],[21372,1,7,"18:04","yg senior yg ngajar","",""],[21373,0,7,"18:05","baweel","M","yg senior yg ngajar"],[21374,0,7,"18:05","sholat sanaa","",""],[21375,1,7,"18:05","siap adikk","",""],[21441,1,7,"18:44","dah sholat kamu?","",""],[21442,0,7,"18:50","sudaaa","",""],[21443,0,7,"18:50","KAKAK MASI BELUM PULANG??","",""],[21444,1,7,"18:50","ada tugas kuliah","",""],[21445,1,7,"18:50","udh di kos","H","KAKAK MASI BELUM PULANG??"],[21446,0,7,"18:50","banyaaak","M","ada tugas kuliah"],[21447,1,7,"18:50","dari jam 5","",""],[21448,0,7,"18:50","LAAAH SERIUS","M","dari jam 5"],[21449,1,7,"18:50","kasiann","H","banyaaak"],[21450,1,7,"18:50","semangatt yaa","",""],[21451,1,7,"18:50","terus apa","H","LAAAH SERIUS"],[21452,0,7,"18:50","kirain masi dikantor...","M","terus apa"],[21453,0,7,"18:51","gamau kakk lagi blm niat semangat","M","semangatt yaa"],[21454,1,7,"18:51","wkwkwk udh dari jam set 5 dehh","",""],[21455,1,7,"18:51","rebahan dluu","H","gamau kakk lagi blm niat semangat"],[21456,1,7,"18:51","tugas kuliah tu biasanya ngapain si","",""],[21457,0,7,"18:53","pusing paraaah","M","rebahan dluu"],[21458,0,7,"18:53","mau keluar dulu kayanya beli obat","",""],[21459,1,7,"18:53","iyaaa","",""],[21460,1,7,"18:53","jauh ga?","",""],[21461,1,7,"18:54","hati² yaa","",""],[21462,0,7,"18:56","gaaa, dekett","",""],[21463,1,7,"18:56","jalan kaki?","",""],[21464,0,7,"19:00","naik jet pribadi kak","",""],[21465,0,7,"19:00","TUTUP LAGI SHIBAL","",""],[21466,1,7,"19:00","😭😭😭","",""],[21467,1,7,"19:00","kasiann","",""],[21468,1,7,"19:00","naik motor kamu ga kuat?","",""],[21469,0,7,"19:02","gaaa ah males ngeluarinnya aku","M","naik motor kamu ga kuat?"],[21470,1,7,"19:03","susahh yaa keluarnya","",""],[21471,0,7,"19:06","iyaaa udh dikuncii","",""],[21472,1,7,"19:10","kamu sendirian di sana??","",""],[21473,1,7,"19:10","ga bareng temen?","",""],[21474,0,7,"19:11","enggaaa","",""],[21475,1,7,"19:11","kasiann","",""],[21476,1,7,"19:12","masi bocil udh hidup sendiri","",""],[21477,0,7,"19:12","ngacaaa wuu","M","masi bocil udh hidup sendiri"],[21478,1,7,"19:12","aku dah dewasaa","",""],[21479,1,7,"19:13","kamu bocil","",""],[21480,1,7,"19:13","wlee","",""],[21481,0,7,"19:17","AKU JUGA UDH 19 TAHUN KAKK","",""],[21482,0,7,"19:17","udh dewasa","",""],[21483,1,7,"19:17","gaa","",""],[21484,1,7,"19:17","masih bocill","",""],[21485,1,7,"19:17","aku kos juga bareng senior ku sii","",""],[21486,1,7,"19:17","jadi ga sendiri","",""],[21487,0,7,"19:18","OHIYAAA???","M","aku kos juga bareng senior ku sii"],[21488,0,7,"19:18","1 rumah gitu atau gimanaa??","",""],[21489,1,7,"19:18","seniorr beneran ini yaa 😭😭","",""],[21490,1,7,"19:18","senior di kantor","",""],[21491,1,7,"19:18","kos","",""],[21492,1,7,"19:18","sekamar di kos","H","1 rumah gitu atau gimanaa??"],[21493,0,7,"19:18","cowoo???","",""],[21494,1,7,"19:20","cewek","",""],[21495,0,7,"19:22","hah seriuss","",""],[21496,1,7,"19:22","ya cowok lahh😭😭","",""],[21497,1,7,"19:22","di sini ketat tau","",""],[21498,1,7,"19:22","banyak cctv","",""],[21499,1,7,"19:23","gk bisa bawa orang sembaranga","",""],[21500,0,7,"19:23","KAGET","M","ya cowok lahh😭😭"],[21501,1,7,"19:23","walau sesama jenis","",""],[21502,1,7,"19:23","skwkw","H","KAGET"],[21503,0,7,"19:24","ohh iyaa???","M","walau sesama jenis"],[21504,1,7,"19:24","iyaa","",""],[21505,0,7,"19:24","aku sendiriann tapi kaya kalo abis kelass temen temen cwe aku ngumpul disinii","",""],[21506,1,7,"19:24","ohhh seruu","",""],[21507,1,7,"19:24","ramee","",""],[21508,1,7,"19:24","aku kira sendiriann","",""],[21509,0,7,"19:24","iyaaa dongg","",""],[21510,1,7,"19:24","kalo sendiri sepi gak sii","",""],[21511,1,7,"19:25","aku butuh bgt orang buat ngobroll","",""],[21512,1,7,"19:25","ini aja masi sepi walau udh ada temen ku","",""],[21513,0,7,"19:25","tapi itu kamu berduaa ga awkward kahh??","",""],[21514,1,7,"19:25","makanya aku main leo","",""],[21515,1,7,"19:25","enggakk","H","tapi itu kamu berduaa ga awkward kahh??"],[21516,1,7,"19:25","nyambung bgt sama diaa","",""],[21517,0,7,"19:25","org tangerang juga kah??","",""],[21518,1,7,"19:25","walau dia senior tapi kayak temen biasa aja gituu","",""],[21519,1,7,"19:26","tapi tetep respect","",""],[21520,1,7,"19:26","orang semarang","H","org tangerang juga kah??"],[21521,1,7,"19:26","rantau juga diaa","",""],[21522,1,7,"19:26","aku aja baru kenal dia di sini februari lalu","",""],[21523,0,7,"19:26","WOW JAUH BGT","M","orang semarang"],[21524,1,7,"19:26","iyaa","H","WOW JAUH BGT"],[21525,1,7,"19:26","jarang ada talent IT di sini","",""],[21526,1,7,"19:26","makanya jauh²","",""],[21527,0,7,"19:26","kan ada kakak","M","jarang ada talent IT di sini"],[21528,1,7,"19:27","aku aja dari tangerang","H","kan ada kakak"],[21529,1,7,"19:27","maksudnya orang asli sini gitu lhoo","",""],[21530,1,7,"19:27","maknya yg di panggil orang² dari jauh","",""],[21531,0,7,"19:28","oalaahh...","",""],[21532,0,7,"19:28","kan ada aku","",""],[21533,0,7,"19:28","kok ga manggil aku ya","",""],[21534,0,7,"19:28","🙄🙄","",""],[21535,1,7,"19:28","ehh iyaa","",""],[21536,1,7,"19:28","kamu kan jago bgt yaa","",""],[21537,1,7,"19:28","katanya kamu tim developer chatgpt","",""],[21538,0,7,"19:29","iya","",""],[21539,0,7,"19:29","aku chat gpt nya","",""],[21540,0,7,"19:29","😊😊😊","",""],[21541,1,7,"19:29","😭😭😭","",""],[21542,1,7,"19:29","dari tadi aku chattan sama bot","",""],[21543,0,7,"19:29","NGAKAAAAK","",""],[21544,0,7,"19:29","mau juga kalo bot nya kaya aku","",""],[21545,1,7,"19:30","wkwkwkwk","",""],[21546,1,7,"19:30","kamu ternyata npd yaa","",""],[21547,1,7,"19:30","wkwk","",""],[21548,0,7,"19:30","aku tadii stalk ig kakak","",""],[21549,1,7,"19:30","mang bolehh","H","aku tadii stalk ig kakak"],[21550,0,7,"19:30","LAH KE THE BREEZE","",""],[21551,0,7,"19:30","deket bgt itu","",""],[21552,1,7,"19:31","ohh deket kamuu😭😭","",""],[21553,0,7,"19:31","tadii sihh ada notif like postingan aku gatau siapaa 🙄🙄","M","mang bolehh"],[21554,0,7,"19:31","banget","M","ohh deket kamuu😭😭"],[21555,0,7,"19:31","ga banget sih","",""],[21556,1,7,"19:31","dlu tempat pelatihan kuu di situ","H","LAH KE THE BREEZE"],[21557,1,7,"19:31","di GOP","",""],[21558,0,7,"19:31","2 km an kali yaa","",""],[21559,1,7,"19:32","siapa yaa","H","tadii sihh ada notif like postingan aku "],[21560,1,7,"19:32","oohhh anak bsd toohhh","H","2 km an kali yaa"],[21561,0,7,"19:32","oh iyaa???","M","dlu tempat pelatihan kuu di situ"],[21562,0,7,"19:32","pelatihaan it atau apa??","",""],[21563,1,7,"19:32","iyaa","",""],[21564,1,7,"19:32","di green office parknyaa","",""],[21565,1,7,"19:32","enak banget klo ngantor di situ","",""],[21566,0,7,"19:32","kereeen bgt","M","di green office parknyaa"],[21567,1,7,"19:32","aku di gedung travelokaa","",""],[21568,0,7,"19:32","tepuk tangan","",""],[21569,0,7,"19:33","emg ada kakk??","M","aku di gedung travelokaa"],[21570,0,7,"19:33","ga ngeh","",""],[21571,1,7,"19:33","semua orang juga bisa kali kalo ada uang","H","kereeen bgt"],[21572,1,7,"19:33","😭😭","",""],[21573,1,7,"19:33","kan ada gedung travelokaa","H","emg ada kakk??"],[21574,0,7,"19:33","aku ngeh nya xxi, the cost, foodcourt","",""],[21575,1,7,"19:33","gimana si putri daerah","",""],[21576,0,7,"19:33","taman ikan","",""],[21577,0,7,"19:34","NGAKAK","M","gimana si putri daerah"],[21578,0,7,"19:34","lebih enak aeon sihh.. the breeze cozy juga sih","",""],[21579,1,7,"19:35","tetep the breeze","",""],[21580,1,7,"19:35","no 1","",""],[21581,1,7,"19:35","enak bgtt","",""],[21582,1,7,"19:35","ke fore","",""],[21583,1,7,"19:35","terus nyenja di tepi danaunya","",""],[21584,0,7,"19:35","kakak alsut nya manaa","",""],[21585,0,7,"19:35","deket sms ga??","",""],[21586,1,7,"19:36","jauhh lahh😭😭😭","H","deket sms ga??"],[21587,0,7,"19:36","kak ada lagi di bsd eastvara tau gaa","",""],[21588,0,7,"19:36","itu juga ada fore nya","",""],[21589,1,7,"19:36","deket ikea","H","kakak alsut nya manaa"],[21590,1,7,"19:36","gak tauu","H","kak ada lagi di bsd eastvara tau gaa"],[21591,0,7,"19:36","oalaahh","M","deket ikea"],[21592,0,7,"19:36","decathlon jauh gaa","",""],[21593,1,7,"19:36","aku klo ke bsd ke situ situ doang","",""],[21594,1,7,"19:36","gak tau😭😭","H","decathlon jauh gaa"],[21595,0,7,"19:37","kak??? nanti bergaul yaa","",""],[21596,0,7,"19:37","nanti aku ajarin","",""],[21597,1,7,"19:37","iyaa ajarin aku gaull","",""],[21598,1,7,"19:37","udh di bilangin aku ke situ² aja mainnyaa","",""],[21599,1,7,"19:37","😭😭","",""],[21600,1,7,"19:38","kalo gak ya nako","",""],[21601,0,7,"19:38","gapapaahh","",""],[21602,1,7,"19:38","kalo gak pilona","",""],[21603,0,7,"19:38","KOPI SEMUA","",""],[21604,1,7,"19:38","wkwkwk iyaa","",""],[21605,1,7,"19:38","pecinta kopi","",""],[21606,1,7,"19:38","pilona kamu tau?","",""],[21607,1,7,"19:38","yg deket cartenz","",""],[21608,0,7,"19:38","diisnii???","",""],[21609,0,7,"19:39","aku gabisaa kopi","M","pecinta kopi"],[21610,1,7,"19:39","ohh iya kah??","",""],[21611,0,7,"19:39","kalo kakak suka kopi cobain janor deh","",""],[21612,1,7,"19:39","di sini paling kalo gk 527","H","diisnii???"],[21613,1,7,"19:39","kalo gak 1994","",""],[21614,0,7,"19:39","kata temen aku yg suka kopi itu enak","",""],[21615,1,7,"19:39","apa tuh","H","kalo kakak suka kopi cobain janor deh"],[21616,0,7,"19:39","cofee shop","",""],[21617,1,7,"19:40","ada di sini?","",""],[21618,1,7,"19:40","kamu kenapa ga suka kopi?","",""],[21619,0,7,"19:40","iyaaa","",""],[21620,1,7,"19:40","ehh maksudnya ga bisa","M","kamu kenapa ga suka kopi?"],[21621,0,7,"19:40","pahit gamau","M","kamu kenapa ga suka kopi?"],[21622,1,7,"19:40","Pasti suka matchaa","",""],[21623,1,7,"19:41","kamu stalk aja ig aku","",""],[21624,1,7,"19:41","kebanyakan kopi","",""],[21625,1,7,"19:41","di high light","",""],[21626,1,7,"19:41","sekarang udh aku izinkan nge stalk","",""],[21627,0,7,"19:42","matcha yg maniss","M","Pasti suka matchaa"],[21628,0,7,"19:42","apaa yaa","",""],[21629,0,7,"19:42","greentea? jujur aku gabisa bedain tapi","",""],[21630,0,7,"19:42","aku suka matcha nya fore manis gitu","",""],[21631,1,7,"19:42","minuman top 1 yg paling kamu sukaa","",""],[21632,1,7,"19:42","butterscotch manis tauu","H","aku suka matcha nya fore manis gitu"],[21633,0,7,"19:43","vanilla","M","minuman top 1 yg paling kamu sukaa"],[21634,1,7,"19:43","pernah coba ga?","",""],[21635,0,7,"19:43","milkshake","",""],[21636,1,7,"19:43","butterscotch nya fore","",""],[21637,1,7,"19:43","oohhh","H","milkshake"],[21638,0,7,"19:43","salt ga","M","butterscotch nya fore"],[21639,1,7,"19:43","pantes kamu manis","H","aku suka matcha nya fore manis gitu"],[21640,1,7,"19:43","dikit","H","salt ga"],[21641,1,7,"19:43","gurih","",""],[21642,1,7,"19:43","dikit","",""],[21643,0,7,"19:43","APAAAN GOMBAL BAPAK BAPAK","M","pantes kamu manis"],[21644,1,7,"19:43","aowkkwkwkwk","H","APAAAN GOMBAL BAPAK BAPAK"],[21645,1,7,"19:43","buayaa bangett yaaa","",""],[21646,1,7,"19:44","butterscotch","",""],[21647,1,7,"19:44","cobain","",""],[21648,1,7,"19:44","enak","",""],[21649,1,7,"19:44","rasa kopinya ga dominan","",""],[21650,1,7,"19:44","lebih kemanis sedikit asin gurih gitu","",""],[21651,0,7,"19:44","sumpah ya temen aku pesen itu trs penasaran","",""],[21652,0,7,"19:44","tp takut gasuka","",""],[21653,1,7,"19:44","cobain dong","",""],[21654,0,7,"19:44","kopi kan huh","",""],[21655,0,7,"19:44","pait","",""],[21656,1,7,"19:44","kapan² cobain","",""],[21657,1,7,"19:44","nanti klo ga suka aku yg minum","",""],[21658,0,7,"19:45","kaya air laut ga","M","lebih kemanis sedikit asin gurih gitu"],[21659,1,7,"19:45","😭😭😭😭😭","",""],[21660,0,7,"19:45","TRSSS AKU MINUM APA","M","nanti klo ga suka aku yg minum"],[21661,1,7,"19:45","lebih ke air zam zam sih","H","kaya air laut ga"],[21662,0,7,"19:45","AKU TUH TRAUMA BGT BELI SUSU TERNYATA RASANYA SEA SALT","",""],[21663,0,7,"19:45","ddmi allah benci","",""],[21664,0,7,"19:45","itu kaya minum air laut","",""],[21665,1,7,"19:45","beli yg lain","H","TRSSS AKU MINUM APA"],[21666,1,7,"19:46","kamu pernah minum air laut","H","itu kaya minum air laut"],[21667,0,7,"19:46","pernah kelelep","M","kamu pernah minum air laut"],[21668,0,7,"19:46","<sticker>","",""],[21669,1,7,"19:46","😭😭😭","H","pernah kelelep"],[21670,1,7,"19:46","kasiann","",""],[21671,1,7,"19:46","enakk pokoknya","",""],[21672,1,7,"19:46","ga kayak air laut","",""],[21673,1,7,"19:46","haruss cobaa","",""],[21674,0,7,"19:46","okaay noted","",""],[21675,0,7,"19:46","enakaan yg fore itu atau point","",""],[21676,1,7,"19:47","hmm gak pernah coba Butterscotch point","",""],[21677,1,7,"19:47","tapi ada point yg enak","",""],[21678,1,7,"19:47","biscof vanila klo gk salah","",""],[21679,0,7,"19:47","ohhiyaa??","M","biscof vanila klo gk salah"],[21680,1,7,"19:47","susu full cream vanilla pakai selai bisscof","",""],[21681,1,7,"19:48","selai kopi gitu","",""],[21682,1,7,"19:48","enakk","",""],[21683,0,7,"19:48","nantii aku cobaa","",""],[21684,1,7,"19:49","iyaa cobaa","",""],[21685,1,7,"19:49","enakk","",""],[21686,1,7,"19:49","aku tau itu gara² adik akuu","",""],[21687,1,7,"19:49","ehh btw adik aku hampir se umuran kamu tauu😭😭","",""],[21688,0,7,"19:50","OHIYA???","",""],[21689,0,7,"19:50","cewe jugaa???","",""],[21690,0,7,"19:50","kuliah juga atau gimana??","",""],[21691,1,7,"19:50","iyaa","",""],[21692,1,7,"19:50","cewekk","",""],[21693,1,7,"19:50","masih sma","H","kuliah juga atau gimana??"],[21694,1,7,"19:50","telat diaa","",""],[21695,0,7,"19:50","oalaaah di tangerang??","",""],[21696,1,7,"19:50","ehh kyknya dia 2008 dehh","",""],[21697,1,7,"19:50","iyaa","H","oalaaah di tangerang??"],[21698,0,7,"19:50","tuaan akuu 😎😎","M","ehh kyknya dia 2008 dehh"],[21699,1,7,"19:52","iyaaa","",""],[21700,1,7,"19:52","tua","",""],[21701,0,7,"19:53","nyebelin","",""],[21702,1,7,"19:53","wkwkww","",""],[21703,1,7,"19:53","yg nyebelin gini ngangenin tauu","",""],[21704,0,7,"19:53","yg nyebelin pasti bawel","",""],[21705,0,7,"19:53","<sticker>","",""],[21706,1,7,"19:54","yg bawel juga ngangenin","",""],[21707,1,7,"19:54","eakk","",""],[21708,1,7,"19:55","mending kerjain tugas sanaa","",""],[21709,0,7,"19:55","iyaaa aku itu sih","M","yg bawel juga ngangenin"],[21710,1,7,"19:55","aku juga sambil chat sambil ngerjain","",""],[21711,1,7,"19:56","mang eakk??","H","iyaaa aku itu sih"],[21712,0,7,"19:56","KAKK JANGAN DIINGETIN HUH 😡😡😡😡","M","mending kerjain tugas sanaa"],[21713,1,7,"19:56","ihh kasiann uang kuliah kamuu","H","KAKK JANGAN DIINGETIN HUH 😡😡😡😡"],[21714,1,7,"19:56","ayoo pasti kamu bisaa","",""],[21715,1,7,"19:56","tidak ada yg tidak mungkinn","",""],[21716,0,7,"19:56","sebenrnyaa laporan aku udh selesaii sisa masukin itu doang tuh story board","",""],[21717,1,7,"19:56","apa tuu","H","sebenrnyaa laporan aku udh selesaii sisa"],[21718,1,7,"19:56","story board?","",""],[21719,0,7,"19:57","iyaaa itu yg sebelum take videoo kan bikin story board dulu","",""],[21720,1,7,"19:57","ahh ga ngertii😭😭😭","",""],[21721,0,7,"19:57","aku tuh ada tugas bikin iklan layanan masyarakat gituu, nah harus ada storyboard nyaa","",""],[21722,1,7,"19:57","oohhh","H","aku tuh ada tugas bikin iklan layanan ma"],[21723,1,7,"19:57","yg di profile leo kamu itu yaa","",""],[21724,0,7,"19:58","gausah dingertiin kak aku juga gangerti","M","ahh ga ngertii😭😭😭"],[21725,0,7,"19:58","IYA IH GA GUNA JUGAAA","M","yg di profile leo kamu itu yaa"],[21726,1,7,"20:01","maaf yaa aku ga gunaa","H","IYA IH GA GUNA JUGAAA"],[21727,1,7,"20:01","aowkwkw","H","gausah dingertiin kak aku juga gangerti"],[21728,0,7,"20:01","APA DEHHHHHH","M","maaf yaa aku ga gunaa"],[21729,0,7,"20:01","kok kakak","",""],[21730,0,7,"20:01","itu aku bikin profile di tele","",""],[21731,0,7,"20:01","ngakak","",""],[21732,1,7,"20:02","aku ga bisa bantu","",""],[21733,0,7,"20:02","LAAH GAPAPA AKU JADI DAPET RELASI JG DR TANGERANG","M","aku ga bisa bantu"],[21734,0,7,"20:02","jadi punyaaa temen kakak","",""],[21735,1,7,"20:04","wkwkwkwk","",""],[21736,1,7,"20:04","becandaaa","",""],[21737,1,7,"20:04","iyaaa aku juga dapet temen kalcer dari bsd","H","LAAH GAPAPA AKU JADI DAPET RELASI JG DR "],[21738,1,7,"20:04","senior kalcerr","",""],[21739,0,7,"20:04","KAK STOP YA KALCER PALA KAMU 2","M","senior kalcerr"],[21740,0,7,"20:05","y makasi junior","M","senior kalcerr"],[21741,0,7,"20:05","<sticker>","",""],[21742,1,7,"20:06","hehh","H","KAK STOP YA KALCER PALA KAMU 2"],[21743,1,7,"20:06","tidak fantash bawa² umur","",""],[21744,1,7,"20:06","mulai tengil","H","y makasi junior"],[21745,0,7,"20:11","KAMU DULUAAN","M","mulai tengil"],[21746,1,7,"20:12","mana adaa","",""],[21747,1,7,"20:13","kerjain tugasnyaa","",""],[21748,0,7,"20:16","donee wlee","",""],[21749,1,7,"20:17","ihh rajinnyaaa","",""],[21750,1,7,"20:18","akhirnya kerja juga dia","",""],[21751,0,7,"20:28","TADII KAN MASII PUSINGG","",""],[21752,0,7,"20:28","<sticker>","",""],[21753,1,7,"20:28","alhamdulliah sekarang udh enggaa","",""],[21754,1,7,"20:28","fokuss dlu gihh","",""],[21755,1,7,"20:29","atau kamu bisa kerja sambil chattan","",""],[21756,1,7,"20:29","<code>","",""],[21757,0,7,"20:30","KAKK????","",""],[21758,0,7,"20:30","itu apa","",""],[21759,1,7,"20:30","code","",""],[21760,0,7,"20:31","bahkan kaya gitu aja aku gabisa bacanya","",""],[21761,1,7,"20:31","itu cuma html sama next js lhoo","",""],[21762,0,7,"20:31","iyaaa kak... dijelasin sampe berbusa juga aku gangerti....","",""],[21763,1,7,"20:31","wkwkwk","",""],[21764,1,7,"20:31","gampangg","",""],[21765,1,7,"20:31","kalo ikut pelatihan kayak akuu","",""],[21766,1,7,"20:32","4 bulan belajar","",""],[21767,1,7,"20:32","langsung jago","",""],[21768,1,7,"20:32","lgsg bisa kerja tanpa perlu gelar","",""],[21769,0,7,"20:32","abang jago?","",""],[21770,0,7,"20:32","<sticker>","",""],[21771,1,7,"20:32","jago dongg","",""],[21772,1,7,"20:32","klo gk jago masih nganggur sekarang","",""],[21773,1,7,"20:32","wkwkw","",""],[21774,0,7,"20:32","IH ITU KAN JOKES KAKK","",""],[21775,0,7,"20:32","yaudaah sanaa lanjut kakk","",""],[21776,1,7,"20:32","wkwkwkwk","",""],[21777,1,7,"20:33","ini juga jokes kakk","M","klo gk jago masih nganggur sekarang"],[21778,1,7,"20:33","aku gak jago sebenernyaa","",""],[21779,0,7,"20:33","ssttt","",""],[21780,0,7,"20:33","udh kak","",""],[21781,0,7,"20:33","iya tau jago bgtt","",""],[21782,0,7,"20:33","<sticker>","",""],[21783,1,7,"20:33","wkwkkw kamu lucu bgtt sihh🤣🤣","",""],[21784,0,7,"20:34","emangg","M","wkwkkw kamu lucu bgtt sihh🤣🤣"],[21785,0,7,"20:34","baru tau yaa","",""],[21786,1,7,"20:34","temen aku sampe ngeledekin ngapain main hp sambil senyum² sendiei","",""],[21787,1,7,"20:34","kan baru akrab","H","baru tau yaa"],[21788,0,7,"20:34","ciee ngapain kak senyum senyum","M","temen aku sampe ngeledekin ngapain main "],[21789,0,7,"20:34","<sticker>","",""],[21790,1,7,"20:35","ngapain yaa","H","ciee ngapain kak senyum senyum"],[21791,1,7,"20:35","pikir aja sendiri","",""],[21792,0,7,"20:37","itu lagi chating sama aku, soalnya kan aku naturally funny 😎😎","M","pikir aja sendiri"],[21793,1,7,"20:37","ohh gituuu","",""],[21794,1,7,"20:38","<sticker 🦖>","",""],[21795,0,7,"20:41","hihihi bercandaa peace","M","ohh gituuu"],[21796,1,7,"20:43","emg bener kokk kamu naturally funny","",""],[21797,1,7,"20:43","naturraly cute also","",""],[21798,0,7,"20:46","jangan gitu nanti aku pingsan","",""],[21799,1,7,"20:47","jangann","",""],[21800,1,7,"20:47","tugas masih banyak","",""],[21801,0,7,"20:49","diingetin lagi..","",""],[21802,0,7,"20:49","<sticker>","",""],[21803,1,7,"20:49","iyaa makanya jangan pingsan dluu","",""],[21804,1,7,"20:50","makanya jangan di tunda² adikk... biar ga numpuk","",""],[21805,0,7,"20:51","ini apaa yaa","",""],[21806,0,7,"20:51","analisis situasi aku mentok bgt","",""],[21807,1,7,"20:54","tanya AI boleh gak si kalo kuliah","",""],[21808,1,7,"20:54","aku tak tau","",""],[21809,0,7,"20:55","boleeh kalo jurnalnya kurang gt","",""],[21810,0,7,"20:55","TAPI MALES PARAFRASENYAA","",""],[21811,0,7,"20:55","kak kerja sana","",""],[21812,0,7,"20:55","kok masi online","",""],[21813,1,7,"20:56","ini sambil kerjaa bang","H","kak kerja sana"],[21814,1,7,"20:56","bahasa apa itu","H","TAPI MALES PARAFRASENYAA"],[21815,1,7,"20:57","parafrase","",""],[21816,0,7,"21:02","bahasa ai sama struktur katanya tuh harus diubah jadi gaya penulisan kitaa","M","parafrase"],[21817,0,7,"21:02","soalnya kalo engga ke detect bgt itu ai nya","",""],[21818,1,7,"21:02","oohhh","",""],[21819,1,7,"21:03","suruh ai lagi gak bisa buat parafrase","",""],[21820,0,7,"21:03","WOI NGAKAAAK","M","suruh ai lagi gak bisa buat parafrase"],[21821,0,7,"21:03","samaa ajaa ai oon soalnya","",""],[21822,0,7,"21:04","apa aku yg oon ngeprompt nya","",""],[21823,1,7,"21:04","😭😭😭😭","",""],[21824,1,7,"21:05","pakai gpt premium","",""],[21825,1,7,"21:05","5.5","",""],[21826,1,7,"21:05","bagus itu","",""],[21827,0,7,"21:05","gamau ah ntar dia makin pinter","",""],[21828,0,7,"21:05","kak kalo kerja boleh salah ga","",""],[21829,1,7,"21:06","😭😭","H","gamau ah ntar dia makin pinter"],[21830,1,7,"21:06","dari pada kamu ke susahab","",""],[21831,1,7,"21:06","klo di tempat aku bolehh","H","kak kalo kerja boleh salah ga"],[21832,1,7,"21:06","sekali²","",""],[21833,1,7,"21:06","asal gak sampai menghambat kerjaan orang lain","",""],[21834,1,7,"21:06","baru bgt tadi meeting jam 12 bos aku bahas itu","",""],[21835,0,7,"21:06","waktu itu aku pernah salah minus sampe 30 jt gt.......","",""],[21836,0,7,"21:07","hzsndidnekd","",""],[21837,1,7,"21:08","SALAH APA JIRR😭😭😭","H","waktu itu aku pernah salah minus sampe 3"],[21838,0,7,"21:09","waktu itu kaya ditawarin admin gt sm kakak ipar aku kan.. trs aku bikin penawaran harga barang... salah ngitung qty nyaa... harusnya harganya lebih gede dari hasil yg aku taruh di penawaran itu... tp terbyata udh di share ke cust nya trs udh di setujuin...","",""],[21839,0,7,"21:09","pas kakak aku check tuh kaya kuraaang 😭😭😭😭","",""],[21840,0,7,"21:09","SUMPAH AKU DIEHKDDKWKES","",""],[21841,0,7,"21:10","gaenak","",""],[21842,0,7,"21:10","minta maaf bgt.... dan udh gamau lanjut","",""],[21843,1,7,"21:10","😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭","",""],[21844,0,7,"21:10","😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭","",""],[21845,1,7,"21:11","TERUS DI SURU GANTI RUGI GAAA","",""],[21846,1,7,"21:11","shock bgt dengernyaa😭😭😭😭😭😭","",""],[21847,0,7,"21:11","enggaa lah... kan kakak aku sendiri...","M","TERUS DI SURU GANTI RUGI GAAA"],[21848,0,7,"21:11","cuma ya gaenak... udh gamau lanjut lagi","",""],[21849,0,7,"21:11","mama aku ngomel ngomel","",""],[21850,0,7,"21:11","parah","",""],[21851,1,7,"21:11","dimarahin gak","",""],[21852,1,7,"21:11","😭😭😭😭😭😭😭","H","mama aku ngomel ngomel"],[21853,0,7,"21:11","itu aku ngerjain penawaran sambil main sm temen aku","",""],[21854,0,7,"21:11","ga fokus","",""],[21855,0,7,"21:11","😭😭😭","",""],[21856,1,7,"21:12","😭😭😭😭😭","",""],[21857,1,7,"21:12","gapapa","",""],[21858,1,7,"21:12","jadi pelajaran","",""],[21859,0,7,"21:12","bgt","M","jadi pelajaran"],[21860,1,7,"21:12","sumpah speechlesa bgtt woiii","",""],[21861,1,7,"21:13","😭😭","",""],[21862,0,7,"21:13","makanya ini aku takut gangguin kakak","",""],[21863,0,7,"21:13","ntar salah gimana","",""],[21864,1,7,"21:14","enggakk","",""],[21865,1,7,"21:14","aku selalu cross check & make sure sebelum submit kerjaan kuu","",""],[21866,1,7,"21:14","mungkin itu bisa kamu terapin jugaa","",""],[21867,1,7,"21:15","nongkrong sambil kerja gapapa","",""],[21868,1,7,"21:15","sampe rumah sebelum submit di cross check lagi kerjaannya","",""],[21869,1,7,"21:15","pastiin ga ada yg salah","",""],[21870,0,7,"21:15","huhuhuuu","",""],[21871,0,7,"21:16","dulu aku perasaan udh cross check tau...","",""],[21872,0,7,"21:16","kok bisa ya","",""],[21873,0,7,"21:16","org kerja kok kereen bgt ya","",""],[21874,0,7,"21:16","<sticker>","",""],[21875,0,7,"21:16","kak semangatt","",""],[21876,1,7,"21:17","🥲🥲","H","dulu aku perasaan udh cross check tau..."],[21877,1,7,"21:17","ada yg terlewat mungkinn","",""],[21878,1,7,"21:17","iyaa adikjk","H","kak semangatt"],[21879,1,7,"21:17","semangat jugaa","",""],[21880,0,7,"21:22","gmw wleee","M","semangat jugaa"],[21881,1,7,"21:24","nanti kamu juga kerjaa kokkk","H","org kerja kok kereen bgt ya"],[21882,1,7,"21:24","mulaii","H","gmw wleee"],[21883,1,7,"21:24","tetep kerja walau sambil rebahan","",""],[21884,1,7,"21:25","<videonote>","",""],[21885,0,7,"21:29","yeuu boong tuh ga kerja itu mahh","",""],[21886,1,7,"21:29","kerjaaa","",""],[21887,0,7,"21:30","ga serius nih kerjanya.. aku cepuin yaa","",""],[21888,1,7,"21:30","sambil rebahan","",""],[21889,1,7,"21:30","boss aku juga tau cara kerja ku","H","ga serius nih kerjanya.. aku cepuin yaa"],[21890,1,7,"21:30","yg penting beress","",""],[21891,0,7,"21:30","<sticker>","",""],[21892,0,7,"21:30","bohonggg","",""],[21893,1,7,"21:30","<sticker 🙆‍♀>","",""],[21894,1,7,"21:30","benerann","H","bohonggg"],[21895,0,7,"21:31","okaayy... percaya dehh","",""],[21896,1,7,"21:31","percayaa kannn","",""],[21897,1,7,"21:32","malming mau ngopi gaa","",""],[21898,0,7,"21:32","KAN GASUKA KOPI","M","malming mau ngopi gaa"],[21899,0,7,"21:33","🙄🙄🙄","",""],[21900,1,7,"21:33","ishhh","",""],[21901,1,7,"21:33","ga gituu","",""],[21902,0,7,"21:33","HAHAHAHA","",""],[21903,1,7,"21:33","maksudnya hang out gituu","",""],[21904,1,7,"21:33","nongs & nge chill","",""],[21905,0,7,"21:33","dimanaa","",""],[21906,1,7,"21:33","geloo jaksel bangett","",""],[21907,0,7,"21:33","IYA TAU YAALLAH","M","nongs & nge chill"],[21908,1,7,"21:33","527 mau gaa","H","dimanaa"],[21909,0,7,"21:33","emang kan 😝😝","M","geloo jaksel bangett"],[21910,1,7,"21:33","atau ada rekomendasi yg lain","",""],[21911,1,7,"21:34","wkwkwk","H","emang kan 😝😝"],[21912,0,7,"21:34","boleeh","",""],[21913,0,7,"21:34","jam berapaa??","",""],[21914,0,7,"21:34","ga malem banget kan kak?","",""],[21915,1,7,"21:35","soree","",""],[21916,1,7,"21:35","pulangnya terserah kamu mau jam berapaa","",""],[21917,0,7,"21:37","tapi ngga diculik kan yaa..","",""],[21918,1,7,"21:37","YaAllahhh😭😭😭","",""],[21919,1,7,"21:38","untuk apaa","",""],[21920,0,7,"21:38","YA KAAN MAKE SURRE","",""],[21921,0,7,"21:38","<sticker>","",""],[21922,1,7,"21:38","gak akann😭😭","",""],[21923,0,7,"21:38","takut dijual","",""],[21924,0,7,"21:38","walaupun rugi","",""],[21925,1,7,"21:39","enggak akannn😭😭","",""],[21926,0,7,"21:39","BAIK","",""],[21927,1,7,"21:39","yowes kalo gak mau","",""],[21928,0,7,"21:39","<sticker>","M","yowes kalo gak mau"],[21929,0,7,"21:39","mau","",""],[21930,1,7,"21:40","okayy","",""],[21931,1,7,"21:40","jam 5an palingg","",""],[21932,1,7,"21:40","kalo di situ rame kemana ya","",""],[21933,1,7,"21:40","ada opsi ga kamu?","",""],[21934,0,7,"21:40","ke bandung","M","kalo di situ rame kemana ya"],[21935,1,7,"21:41","yaAllah permintaan apa ini","",""],[21936,1,7,"21:41","naik motorr😭","",""],[21937,0,7,"21:41","ke hijii","M","ada opsi ga kamu?"],[21938,0,7,"21:41","tapi hiji juga rameee","",""],[21939,0,7,"21:41","BERCANDA 😡😡😡😡","M","naik motorr😭"],[21940,1,7,"21:41","masa nginep","H","ke bandung"],[21941,1,7,"21:41","hijii apa tu","H","tapi hiji juga rameee"],[21942,0,7,"21:41","kak jangan diseriusin itu asbun..","",""],[21943,1,7,"21:42","aowkwkwkwkwk enggakkkkkk","H","kak jangan diseriusin itu asbun.."],[21944,0,7,"21:42","hijii itu...","M","hijii apa tu"],[21945,1,7,"21:42","satu?","H","hijii itu..."],[21946,0,7,"21:42","cafee samaa","",""],[21947,0,7,"21:42","BODO","M","satu?"],[21948,1,7,"21:42","klo mau di seriusin bisa aja tapi ga dadakan","H","kak jangan diseriusin itu asbun.."],[21949,1,7,"21:42","wait aku search","H","cafee samaa"],[21950,1,7,"21:43","kamu pernah ke sana?","H","cafee samaa"],[21951,0,7,"21:43","pernaah","M","kamu pernah ke sana?"],[21952,0,7,"21:44","samaa kalo malming rame jugaa","",""],[21953,1,7,"21:45","enakan mana sama 527?","",""],[21954,0,7,"21:45","527","",""],[21955,0,7,"21:45","space nya lebih luass soalnya","",""],[21956,1,7,"21:46","oohhh","",""],[21957,1,7,"21:46","agak sorean berarti datangnyaa","",""],[21958,1,7,"21:46","aku sabtu oulang kerja jam 2","",""],[21959,0,7,"21:46","jam 12","",""],[21960,1,7,"21:46","paling cuci motor dlu","",""],[21961,0,7,"21:47","jam 10 pagi","",""],[21962,0,7,"21:47","ok ga","",""],[21963,1,7,"21:47","terus bersih²","",""],[21964,0,7,"21:47","ok sih aku","",""],[21965,1,7,"21:47","mandi","",""],[21966,1,7,"21:47","nyuci motor","",""],[21967,1,7,"21:47","jemput kamu","",""],[21968,1,7,"21:47","eh jemput kan","",""],[21969,0,7,"21:47","iya bawel","M","nyuci motor"],[21970,1,7,"21:47","😭😭😭","H","jam 10 pagi"],[21971,0,7,"21:47","gausahh","M","eh jemput kan"],[21972,1,7,"21:47","aku kerjaa sabtuu","",""],[21973,0,7,"21:47","aku bisa teleport","",""],[21974,1,7,"21:47","yg beneee","H","gausahh"],[21975,1,7,"21:47","deket kok dari kos ku","",""],[21976,1,7,"21:47","10 menitan","",""],[21977,0,7,"21:47","eh jemput deh teleport aku rusak","",""],[21978,0,7,"21:48","<sticker>","",""],[21979,1,7,"21:48","wkwkwkwkwkw","H","eh jemput deh teleport aku rusak"],[21980,1,7,"21:48","tapi jujur","",""],[21981,1,7,"21:48","aku belum pernah bonceng cewwk selain keluarga akuu","",""],[21982,0,7,"21:48","AH BOHONG","",""],[21983,1,7,"21:48","sumpahhh","",""],[21984,1,7,"21:48","demi tuhann","",""],[21985,0,7,"21:48","kaya 🐊","",""],[21986,0,7,"21:48","OKKK","",""],[21987,1,7,"21:48","pernah jalan sama cewek","",""],[21988,1,7,"21:49","tapi 2 motor","",""],[21989,1,7,"21:49","itupun cuma temen","",""],[21990,0,7,"21:49","TRS INI AKU BOLEH GAAA","",""],[21991,1,7,"21:49","ga pernah real pacaran","",""],[21992,0,7,"21:49","duh takut","",""],[21993,1,7,"21:49","resmi","",""],[21994,1,7,"21:49","bolehhh","H","TRS INI AKU BOLEH GAAA"],[21995,1,7,"21:49","tapi takut aku tremor","",""],[21996,0,7,"21:49","WKWKWKW HTS YA","M","resmi"],[21997,1,7,"21:49","trus nyebur got","",""],[21998,0,7,"21:49","kasiann..","",""],[21999,1,7,"21:49","enggak","H","WKWKWKW HTS YA"],[22000,0,7,"21:49","KAK","M","trus nyebur got"],[22001,1,7,"21:49","temen","",""],[22002,0,7,"21:49","DEMI ALLAH JANGAN","",""],[22003,1,7,"21:49","real temen","",""],[22004,1,7,"21:49","ngomong lu gw","",""],[22005,1,7,"21:50","terus bahasa binatang lengkap","",""],[22006,1,7,"21:50","gituu","",""],[22007,0,7,"21:50","yaudah aku juga gt ah","",""],[22008,1,7,"21:50","itu tahun 2024","",""],[22009,0,7,"21:50","lo udh makan kak???","",""],[22010,1,7,"21:50","ehh pernah deh bonceng cewek selain keluarga akuu","",""],[22011,1,7,"21:50","kmrn aku bonceng HRD aku","",""],[22012,0,7,"21:51","kak iyaaa kak i trustt u 😭😭😭😭","",""],[22013,1,7,"21:51","ke bank","",""],[22014,1,7,"21:51","ihhh gilaakkkk jaksell abids","H","lo udh makan kak???"],[22015,1,7,"21:51","abiss","",""],[22016,1,7,"21:51","jangan takut yaa kalo tremor","H","kak iyaaa kak i trustt u 😭😭😭😭"],[22017,1,7,"21:51","santai","",""],[22018,1,7,"21:51","trust me","",""],[22019,1,7,"21:51","gak akan masuk got","",""],[22020,0,7,"21:51","NGAKAKK","",""],[22021,0,7,"21:51","gakuat","",""],[22022,0,7,"21:51","okaaay...","",""],[22023,1,7,"21:51","paling nabrak gerobak somay","",""],[22024,0,7,"21:52","LEBIH PARAAH 😡😡😡","",""],[22025,0,7,"21:52","no no yah....","",""],[22026,0,7,"21:52","aku ga kebayang","",""],[22027,1,7,"21:52","wkwkwkw i","",""],[22028,1,7,"21:52","iyaa","",""],[22029,1,7,"21:52","trust me","",""],[22030,1,7,"21:53","doa naik kendaraan darat dari sekarang","",""],[22031,1,7,"21:53","biar gak kenapa napa","",""],[22032,0,7,"21:55","aamiinnnn","",""],[22033,0,7,"21:55","<sticker>","",""],[22034,0,7,"21:55","GAMUNGKIN TREMOR AH","",""],[22035,1,7,"21:55","wkwkwk","",""],[22036,0,7,"21:55","anggep aja cowo","",""],[22037,1,7,"21:55","mungkinn","",""],[22038,1,7,"21:55","💀💀","H","anggep aja cowo"],[22039,0,7,"21:55","NGAKAK","M","💀💀"],[22040,1,7,"21:55","kalo cowok aku pasti ngebutt","",""],[22041,1,7,"21:56","always","",""],[22042,0,7,"21:56","SAMA AKU JUGA NGEBUT","",""],[22043,1,7,"21:56","anjayyy","",""],[22044,1,7,"21:56","tapi enggak ah","",""],[22045,1,7,"21:56","takut","",""],[22046,1,7,"21:56","bawa anak orang","",""],[22047,1,7,"21:56","ngebut²","",""],[22048,0,7,"21:57","berarti yang kakak bawa sebelumnya bukan anak org??.....","",""],[22049,1,7,"21:57","ini bedaa","",""],[22050,1,7,"21:57","cantikk","",""],[22051,1,7,"21:57","klo lecet takut mamah marah","",""],[22052,0,7,"21:58","KQKK","",""],[22053,0,7,"21:58","🐊🐊","",""],[22054,0,7,"21:58","KABUR","",""],[22055,1,7,"21:58","wkwkwkwk","",""],[22056,1,7,"21:58","iyaa deh ga lagi lagii","",""],[22057,0,7,"21:59","HSAHAHHAA","",""],[22058,0,7,"21:59","lucu banget","",""],[22059,1,7,"21:59","ehh tapi kamu tinggi bgt yaa?","",""],[22060,1,7,"21:59","di foto keliatan tinggi","",""],[22061,1,7,"22:00","takut kalah tinggi aku","",""],[22062,0,7,"22:00","HSHSHAHAA","",""],[22063,0,7,"22:00","kayanyaaa grgr 0.5 deh","",""],[22064,0,7,"22:01","berapaa yaa gapernah ngukur lagi","",""],[22065,0,7,"22:01","emg kakak berapa??","",""],[22066,1,7,"22:01","pendekk","",""],[22067,1,7,"22:01","160 sampe gak?","H","berapaa yaa gapernah ngukur lagi"],[22068,0,7,"22:01","kakakk berapaaaa","",""],[22069,0,7,"22:01","GATAAUU","M","160 sampe gak?"],[22070,1,7,"22:01","pendekk","H","kakakk berapaaaa"],[22071,0,7,"22:01","YA BERAPA SHAHAHA ENGGAA TINGGI","M","pendekk"],[22072,1,7,"22:01","kayaknya tinggian kamuu","",""],[22073,0,7,"22:01","ENGGALAH","M","kayaknya tinggian kamuu"],[22074,1,7,"22:02","iyaa","",""],[22075,1,7,"22:02","aku pendek bgtt","",""],[22076,0,7,"22:02","cepetan berapa dulu","",""],[22077,1,7,"22:02","makanya jarang foto","",""],[22078,0,7,"22:02","akuu kayanya gasampe 160","",""],[22079,1,7,"22:02","gak pernah face reveal di ig","",""],[22080,1,7,"22:02","aku pendekk","H","akuu kayanya gasampe 160"],[22081,0,7,"22:02","158 kali ya???","",""],[22082,1,7,"22:02","kamu??","H","158 kali ya???"],[22083,0,7,"22:02","PENDAK PENDEK TRS","M","aku pendekk"],[22084,1,7,"22:02","Hahahahhaha","H","PENDAK PENDEK TRS"],[22085,0,7,"22:02","iyaaah","M","kamu??"],[22086,1,7,"22:03","ngakak","",""],[22087,1,7,"22:03","tinggii","H","158 kali ya???"],[22088,0,7,"22:03","kakak berapaa??","",""],[22089,0,7,"22:03","130?","",""],[22090,0,7,"22:03","hehehehe","",""],[22091,0,7,"22:03","<sticker>","",""],[22092,1,7,"22:03","jangan ngeledekk","H","130?"],[22093,1,7,"22:03","liat nanti ajaa","",""],[22094,0,7,"22:03","menyebalkaann","",""],[22095,1,7,"22:04","wkwkwkek","",""],[22096,1,7,"22:04","pendek pokoknya akuu","",""],[22097,1,7,"22:04","aku nanti pakek heels biar tinggi","",""],[22098,0,7,"22:08","NGAKAAKK","M","aku nanti pakek heels biar tinggi"],[22099,1,7,"22:09","awowkwkk","",""],[22100,1,7,"22:09","enggak kok aku ga pendek² bgtt","",""],[22101,0,7,"22:10","akuu jugaa ga tinggi tinggi bgtt","",""],[22102,1,7,"22:11","tinggii","",""],[22103,1,7,"22:11","wait aku cari foto kuu","",""],[22104,0,7,"22:11","KAKK??? EFFORT BGT","",""],[22105,0,7,"22:12","😭😭😭😭😭","",""],[22106,1,7,"22:12","ada nii","",""],[22107,1,7,"22:12","tapi gara² 0.5 jadi anehh","",""],[22108,0,7,"22:12","mee too","M","tapi gara² 0.5 jadi anehh"],[22109,1,7,"22:12","badan aku kayak gendut gitu padahal enggak kok","",""],[22110,1,7,"22:12","aku langsingg","",""],[22111,1,7,"22:12","bb cuma 68 an","",""],[22112,1,7,"22:12","masih wajar","",""],[22113,1,7,"22:12","gak overweight","",""],[22114,0,7,"22:13","HSHAHAHA KAKAAKKK","",""],[22115,0,7,"22:13","LUCU BGT","",""],[22116,1,7,"22:13","nii yaa fotonyaa","",""],[22117,1,7,"22:13","aku paling kiri","",""],[22118,0,7,"22:13","GAUSAH KLARIF KE AKUU ASTAGAA emg aku hrd...","",""],[22119,1,7,"22:13","<photo>","",""],[22120,1,7,"22:14","wkwkwkwk","H","GAUSAH KLARIF KE AKUU ASTAGAA emg aku hr"],[22121,0,7,"22:14","AAPASIHH ITU TINGGI","",""],[22122,0,7,"22:14","mau dipukul?","",""],[22123,1,7,"22:14","pendekkk","H","AAPASIHH ITU TINGGI"],[22124,1,7,"22:14","tinggian kamuu","",""],[22125,1,7,"22:14","cuma 171","",""],[22126,0,7,"22:14","KAK","",""],[22127,0,7,"22:14","demi allah?","",""],[22128,0,7,"22:14","mau ditimpuk beneran ya?","",""],[22129,1,7,"22:14","sewajarnya cowok gak sih?","M","cuma 171"],[22130,1,7,"22:14","jangan seniorr ampunn","H","mau ditimpuk beneran ya?"],[22131,0,7,"22:14","NUEBELIN BGT NGELEDEK","",""],[22132,1,7,"22:15","wkwkwkw","",""],[22133,1,7,"22:16","tapi benerkan itu normalnya cowok segituuu","",""],[22134,1,7,"22:16","ga tinggi","H","AAPASIHH ITU TINGGI"],[22135,0,7,"22:16","UDH STOPP ITU TINGGI.","",""],[22136,0,7,"22:17","125 tuh pendek","",""],[22137,1,7,"22:17","😭😭😭","",""],[22138,0,7,"22:17","<sticker>","",""],[22139,1,7,"22:17","itu bayikk","H","125 tuh pendek"],[22140,0,7,"22:17","hehehehe","M","itu bayikk"],[22141,0,7,"22:17","kalo tinggi aku 125 gimana","",""],[22142,1,7,"22:17","aku tenteng","",""],[22143,1,7,"22:18","kayak tas belanja sayur","",""],[22144,1,7,"22:18","kayak tas superindo","",""],[22145,0,7,"22:19","<sticker>","",""],[22146,0,7,"22:19","gapapa sihh lucu","",""],[22147,1,7,"22:20","aowkwk","",""],[22148,1,7,"22:20","gak lahh kamu tinggii","",""],[22149,1,7,"22:20","tapi foto tadi yaaa","",""],[22150,1,7,"22:21","itu pipi aku gemoy karena malemnya aku abis makan indomie","",""],[22151,1,7,"22:21","wajar lah yaa tanggal tuaa","",""],[22152,1,7,"22:21","jadi agk ga sehat gituu","",""],[22153,0,7,"22:21","emg kenapa","",""],[22154,1,7,"22:21","karena mie natriumnya tinggi","",""],[22155,1,7,"22:21","jadi muka aku bloated","",""],[22156,0,7,"22:21","lucu ah","",""],[22157,1,7,"22:21","jadi gemoyy","",""],[22158,1,7,"22:21","sekarang udh enggak kokk","",""],[22159,0,7,"22:21","yaaah","M","sekarang udh enggak kokk"],[22160,1,7,"22:21","udh manly abiss","",""],[22161,0,7,"22:21","kenapa engga","",""],[22162,1,7,"22:21","udh hidup sehat","H","yaaah"],[22163,1,7,"22:21","olahraga","",""],[22164,1,7,"22:22","kurangi garam","",""],[22165,0,7,"22:22","yaaah","",""],[22166,0,7,"22:22","kecewa nih","",""],[22167,1,7,"22:22","Kenapaa","",""],[22168,1,7,"22:22","bagusan kempess","",""],[22169,1,7,"22:22","jawline tegass","",""],[22170,1,7,"22:22","lakik bangett","",""],[22171,0,7,"22:22","lucuu itu ky gituu gemass","",""],[22172,0,7,"22:22","STOP GAAAAKKK","M","lakik bangett"],[22173,0,7,"22:22","<sticker>","",""],[22174,1,7,"22:22","ihhh buayaa","H","lucuu itu ky gituu gemass"],[22175,1,7,"22:22","lariii","",""],[22176,1,7,"22:22","ada buayaa","",""],[22177,0,7,"22:22","aku iket ya jarinya","",""],[22178,0,7,"22:23","yeu nggaa...","M","ada buayaa"],[22179,1,7,"22:23","stiker buaya dimana sihh😭😭😭","",""],[22180,0,7,"22:23","org aku cuma bilang fakta..","",""],[22181,0,7,"22:23","🐊","M","stiker buaya dimana sihh😭😭😭"],[22182,1,7,"22:23","tuhh","H","org aku cuma bilang fakta.."],[22183,1,7,"22:23","buaya","",""],[22184,1,7,"22:23","dimana ituuu","H","🐊"],[22185,0,7,"22:23","bodooo","",""],[22186,0,7,"22:23","kebun binatang laah","M","dimana ituuu"],[22187,1,7,"22:23","🐊🐊🐊🐊","",""],[22188,1,7,"22:23","nah ketemuu","",""],[22189,1,7,"22:24","🐊🐊","H","org aku cuma bilang fakta.."],[22190,1,7,"22:24","larii","",""],[22191,1,7,"22:26","jadinya jam berapa nii","",""],[22192,1,7,"22:26","sabtu","",""],[22193,1,7,"22:27","ehh jadi kan?","",""],[22194,0,7,"22:30","KAKAAAKKKK","",""],[22195,0,7,"22:30","nanya trs beneran mau dipukulin ya","",""],[22196,1,7,"22:30","ihh jamnya kan belum tauu","",""],[22197,0,7,"22:30","katanyaa soree","",""],[22198,1,7,"22:30","coba aja klo kena","H","nanya trs beneran mau dipukulin ya"],[22199,0,7,"22:30","jam 5","",""],[22200,1,7,"22:30","belum setuju kamu tadi","H","jam 5"],[22201,0,7,"22:30","<sticker>","M","coba aja klo kena"],[22202,0,7,"22:31","sejutu","M","belum setuju kamu tadi"],[22203,1,7,"22:31","atau mau awal lagi?","",""],[22204,1,7,"22:31","jam 4 si bisaa","",""],[22205,0,7,"22:31","apa tuh","M","atau mau awal lagi?"],[22206,0,7,"22:31","ohhh","",""],[22207,1,7,"22:31","insyaAllah","",""],[22208,1,7,"22:31","biar ga rame","",""],[22209,0,7,"22:31","5 ajaa gapapa","",""],[22210,0,7,"22:31","gapapa rame kan kita mau nonton layar tancep dulu","M","biar ga rame"],[22211,1,7,"22:31","tadi kamu minta jam 10","H","sejutu"],[22212,1,7,"22:31","mau lama lama yaa sama aku","",""],[22213,1,7,"22:32","hah dimana?","H","gapapa rame kan kita mau nonton layar ta"],[22214,0,7,"22:34","org ini mau bantuin bersih bersih cafee nyaa 😎😎","M","mau lama lama yaa sama aku"],[22215,1,7,"22:34","ohhh","H","org ini mau bantuin bersih bersih cafee "],[22216,0,7,"22:34","<sticker 😝>","",""],[22217,1,7,"22:34","kirain mau lama lama sama akuu","",""],[22218,1,7,"22:35","anjirr ngeselin bgtt stiker nyaa 😭😭😭😭","H","😝 Sticker"],[22219,0,7,"22:35","ntar kalo kelamaan beneran diculik","M","kirain mau lama lama sama akuu"],[22220,0,7,"22:35","kak janji ya","",""],[22221,0,7,"22:35","GABOLEH","",""],[22222,1,7,"22:35","ya Allahhh","H","ntar kalo kelamaan beneran diculik"],[22223,1,7,"22:35","masih ajaaa","",""],[22224,1,7,"22:35","gak akaannnn","",""],[22225,0,7,"22:35","mirip kann","M","anjirr ngeselin bgtt stiker nyaa 😭😭😭"],[22226,1,7,"22:36","mirip apa","",""],[22227,0,7,"22:36","mirip aku","M","mirip apa"],[22228,1,7,"22:36","enggakk","H","mirip aku"],[22229,1,7,"22:36","kamu fineshyttt","",""],[22230,1,7,"22:36","gak ngeselin kokk","",""],[22231,1,7,"22:36","baikk","",""],[22232,0,7,"22:36","🐊🐊","M","kamu fineshyttt"],[22233,0,7,"22:36","surabaya","",""],[22234,0,7,"22:36","🐋🐊","",""],[22235,1,7,"22:37","kok buayaa😭😭😭","H","🐊🐊"],[22236,1,7,"22:37","fine itu baik shyt ituuu","",""],[22237,1,7,"22:37","ya itu lahh","",""],[22238,1,7,"22:37","fineshyt artinyaa baikk bangett","",""],[22239,1,7,"22:37","gituuu","",""],[22240,0,7,"22:37","🐊🐊","",""],[22241,1,7,"22:37","kok kamu malah buaya","",""],[22242,1,7,"22:37","tuhh ihh","H","🐊🐊"],[22243,0,7,"22:37","baru kakak soalnya yg bilanh aku baik","M","kok kamu malah buaya"],[22244,1,7,"22:38","mang eakk","",""],[22245,0,7,"22:38","makanya anehh","",""],[22246,1,7,"22:38","boongg","",""],[22247,1,7,"22:38","orang baik banyak yg nyenengij","",""],[22248,1,7,"22:39","buktinya komen ig kamu ramee","",""],[22249,1,7,"22:39","sampe ke highlight nya banyak yg komen","",""],[22250,0,7,"22:40","hahh itu mah aku bayar mereka 1 1","",""],[22251,0,7,"22:40","🙄🙄","",""],[22252,1,7,"22:40","boong","",""],[22253,1,7,"22:40","dosaa","",""],[22254,0,7,"22:41","WKWKWKWW","",""],[22255,1,7,"22:41","huuu","",""],[22256,1,7,"22:42","ehh ga terasa jirr","",""],[22257,1,7,"22:42","udh berjam jam kita chattan","",""],[22258,1,7,"22:42","wkwkwk","",""],[22259,0,7,"22:43","emg gaboleeeh 🤔🤔🤔","M","udh berjam jam kita chattan"],[22260,0,7,"22:43","ASTAGA IYA JAM 11","",""],[22261,1,7,"22:43","bolehh kokk","",""],[22262,0,7,"22:43","demi allah gasadar","",""],[22263,1,7,"22:43","yakannn","",""],[22264,1,7,"22:43","saking serunya chattan sama akuu","",""],[22265,0,7,"22:44","aku kali","M","saking serunya chattan sama akuu"],[22266,0,7,"22:44","<sticker>","",""],[22267,1,7,"22:45","udh ah ribut muluu","",""],[22268,1,7,"22:45","emg pada dasarnya kita cocok","",""],[22269,0,7,"22:45","cocok buat ribut ya kak ?","M","emg pada dasarnya kita cocok"],[22270,1,7,"22:46","iyaaa","",""],[22271,1,7,"22:46","wkwkwkwk","",""],[22272,1,7,"22:46","tuhh ngelucu terusss","",""],[22273,0,7,"22:46","ENGGA NIAT","",""],[22274,0,7,"22:46","sumpah sumpah tugas aku sisa 1 tanggungg","",""],[22275,1,7,"22:47","aku dah selesai dongg","",""],[22276,1,7,"22:47","wlee","",""],[22277,0,7,"22:51","besokk aja dehh ngantukk","",""],[22278,1,7,"22:52","okayy","",""],[22279,1,7,"22:52","dah mau tidur?","",""],[22280,1,7,"23:00","dah tidur kah?","",""],[22281,1,7,"23:00","good night yaa","",""],[22282,1,7,"23:00","may you have the sweetest dream","",""],[22283,0,7,"23:28","KAK BELUMM HABIS BERSIH BERSIH","M","dah tidur kah?"],[22284,0,7,"23:28","hehehe sleep tightt juga kakk","M","good night yaa"],[22285,1,7,"23:28","ihh parahh","H","KAK BELUMM HABIS BERSIH BERSIH"],[22286,1,7,"23:28","aku di tinggal","",""],[22287,0,7,"23:30","NOUUU 😡😡😡👎","",""],[22288,0,7,"23:30","ga ditinggal","",""],[22289,1,7,"23:30","kit hati","",""],[22290,0,7,"23:30","inii beneran mau tidurr tapi","",""],[22291,0,7,"23:30","cius","",""],[22292,1,7,"23:30","okayy","",""],[22293,1,7,"23:30","kasian pasti kamu lelahh","",""],[22294,1,7,"23:32","have a good dream prettyy","",""],[22295,0,7,"23:34","KAK TIDURR KAK","",""],[22296,0,7,"23:34","kakak suka begadang pasti","",""],[22297,1,7,"23:34","iyaa tidurr","",""],[22298,1,7,"23:34","emg tidur nya jam segini","",""],[22299,1,7,"23:34","dahh","",""],[22300,1,7,"23:34","good nightt","",""],[22301,0,7,"23:35","okaaay selamat malam jugaa","M","good nightt"],[22303,0,8,"04:47","bangunn kak sholat","",""],[22304,1,8,"05:13","iyaa","",""],[22305,1,8,"05:14","masuk kuliah jam berapa kamu?","",""],[22307,0,8,"05:55","onlinee akuu","",""],[22308,0,8,"05:55","jam 7 30 hehehe","",""],[22309,1,8,"05:56","ohhh enak bangettt","",""],[22310,1,8,"05:59","aku masuk pagi hari ini","",""],[22311,1,8,"05:59","6.30","",""],[22312,0,8,"05:59","WOW","",""],[22313,1,8,"05:59","ada acara","",""],[22314,0,8,"06:00","PAGI BGTTT","",""],[22315,1,8,"06:00","iyyaaa maless bgttt","",""],[22316,1,8,"06:00","gatau acara apa","",""],[22317,0,8,"06:02","emg normal jam berapaa??","",""],[22318,1,8,"06:02","jam 8","",""],[22319,1,8,"06:02","pulang jam 4","",""],[22320,0,8,"06:02","kaciaaan 😝😝😝","",""],[22321,0,8,"06:02","trs udh rapihh??","",""],[22322,1,8,"06:03","belom","",""],[22323,1,8,"06:03","baru selesai mandi","",""],[22324,0,8,"06:04","YAUDAAH GIH SANAA SIAP SIAP","",""],[22325,0,8,"06:04","30 menit lagii","",""],[22326,1,8,"06:06","kabtor kuu dekatt","",""],[22327,1,8,"06:06","5 menit","",""],[22328,1,8,"06:06","dari kos","",""],[22329,1,8,"06:06","dah siap si","",""],[22330,1,8,"06:07","lagi hair dryer an","",""],[22331,0,8,"06:07","okaaayi","",""],[22332,0,8,"06:07","semangaat kakk","",""],[22333,1,8,"06:11","iyaaa","",""],[22334,1,8,"06:12","<videonote>","",""],[22335,1,8,"06:12","bajunya kayak baju ob","",""],[22336,1,8,"06:12","males bgtt","",""],[22337,1,8,"06:12","😭😭😭","",""],[22338,1,8,"06:12","mana udh di pake 3 hari","",""],[22339,0,8,"06:26","enggaaa ah lucuu","",""],[22340,0,8,"06:26","KAYA SHOPEE HSHAHAHA","",""],[22341,1,8,"06:27","otw","",""],[22342,1,8,"06:27","enggakkk","H","KAYA SHOPEE HSHAHAHA"],[22343,1,8,"06:27","kayak OB","",""],[22344,0,8,"06:27","ob juga milik Allah 😠🤲🤲","",""],[22345,0,8,"06:28","take caree kakk","",""],[22346,1,8,"06:30","😭😭😭😭","H","ob juga milik Allah 😠🤲🤲"],[22347,1,8,"06:30","adilla taherr","",""],[22348,1,8,"06:33","dah sampee","",""],[22349,0,8,"06:34","NYEBELIN","M","adilla taherr"],[22350,0,8,"06:35","UDH SANAAA KERJA HUSH HUSSH","",""],[22352,1,8,"06:41","rebahan dlu","",""],[22353,0,8,"06:56","ngabtuk bgt akuu","",""],[22354,1,8,"06:56","tidur laa","",""],[22355,0,8,"06:58","takutt ga bangunn","",""],[22356,1,8,"07:03","alarm","",""],[22357,1,8,"07:03","ternyata di suru ke sekolahh","",""],[22358,1,8,"07:03","buat pengenalan app","",""],[22359,0,8,"07:04","wihh kerenn","",""],[22360,0,8,"07:04","sekolah maana kak?","",""],[22361,1,8,"07:04","maless😭😭😭","",""],[22362,1,8,"07:04","aku ga suka anak sekolahan","",""],[22363,1,8,"07:04","sma 1","H","sekolah maana kak?"],[22364,0,8,"07:04","laah dekett","M","sma 1"],[22365,1,8,"07:04","sman 1 serang","",""],[22366,1,8,"07:05","kamu tau?","H","laah dekett"],[22367,0,8,"07:05","taau itu yg dipinggir jalan","M","kamu tau?"],[22368,1,8,"07:16","iyaa","",""],[22369,1,8,"07:16","betull","",""],[22370,1,8,"07:22","<videonote>","",""],[22371,0,8,"07:24","SEMANGATT","",""],[22372,0,8,"07:24","cepet bgt???","",""],[22373,1,8,"07:25","belum mulaii","",""],[22374,1,8,"07:25","shalat dhuha dlu mereka","",""],[22375,0,8,"07:26","bukaan, otw nya cepett","M","belum mulaii"],[22376,1,8,"07:27","ga sampai 5 menit dari kantor","",""],[22383,1,8,"09:49","dh balikk kantorr","",""],[22384,1,8,"09:49","capekk","",""],[22446,0,8,"10:52","HAAAYII","",""],[22447,0,8,"10:52","habiss nugass banyakk","",""],[22448,0,8,"10:52","tugass aku sisaa 2 hihi","",""],[22449,0,8,"10:52","panass gaa diluaar","M","capekk"],[22450,1,8,"10:53","wihh rajinnyaaa","H","habiss nugass banyakk"],[22451,1,8,"10:53","nambah lagi tugas nya?","H","tugass aku sisaa 2 hihi"],[22452,1,8,"10:54","bangettt","H","panass gaa diluaar"],[22453,1,8,"10:54","apalgi hari jumat","",""],[22454,0,8,"10:54","iyaaahh","M","nambah lagi tugas nya?"],[22455,0,8,"10:54","sama ini tugas buat UAS deadlinenya sebulaan sih","",""],[22456,0,8,"10:54","ohiyaaa jumatan","M","apalgi hari jumat"],[22457,0,8,"10:54","kakak kalo jumatan dimana dong itu?","",""],[22458,1,8,"10:54","<videonote>","",""],[22459,1,8,"10:54","dah ganti outfit","M","Video"],[22460,0,8,"10:54","laaahh","",""],[22461,1,8,"10:54","😭😭😭","H","sama ini tugas buat UAS deadlinenya sebu"],[22462,1,8,"10:54","pasti banyak bgtt","",""],[22463,0,8,"10:55","emg konsepnya berubah gitu? HSHAHAHA","",""],[22464,1,8,"10:55","di polres","H","kakak kalo jumatan dimana dong itu?"],[22465,1,8,"10:55","iyaa","H","emg konsepnya berubah gitu? HSHAHAHA"],[22466,1,8,"10:55","aslinya hari ini batik","",""],[22467,0,8,"10:55","enggaa essai doaang","M","pasti banyak bgtt"],[22468,0,8,"10:55","oalaahh i see","M","di polres"],[22469,1,8,"10:55","karena ada axara jadi pake baju OB","",""],[22470,0,8,"10:55","depan sma 1 kan?","",""],[22471,1,8,"10:55","kok lama DL nya","H","enggaa essai doaang"],[22472,1,8,"10:55","iyaa","H","depan sma 1 kan?"],[22473,0,8,"10:55","KOK OB SIH NGAKAK BGT","M","karena ada axara jadi pake baju OB"],[22474,0,8,"10:55","dosen surga itu","M","kok lama DL nya"],[22475,0,8,"10:56","gila dosen paling baik masyaallah bgt","",""],[22476,0,8,"10:56","gapernah ngasih tugas","",""],[22477,0,8,"10:56","cuma tugas uts uas doang.m","",""],[22478,1,8,"10:56","iyaaa kaayk baju OB","H","KOK OB SIH NGAKAK BGT"],[22479,1,8,"10:56","masyaAllahh","H","dosen surga itu"],[22480,1,8,"10:57","pengen punya dosen semuanya yg kayak gitu","",""],[22481,1,8,"10:58","sepanas inii","",""],[22482,1,8,"10:58","makin gosong aku","",""],[22483,0,8,"10:58","cobaa req maju 10 langkah","M","sepanas inii"],[22484,0,8,"10:58","udh follow..","",""],[22485,1,8,"10:59","gakk😭😭","",""],[22486,1,8,"10:59","aku gak suka panass","",""],[22487,1,8,"10:59","mending kedinginan sampe menggigil","",""],[22488,0,8,"11:03","iyaaasihh betterr","",""],[22489,0,8,"11:03","tapi kalo matahari jam 8 masih oke 😎😎","",""],[22490,1,8,"11:07","tetep ga sukaa😭😭","H","tapi kalo matahari jam 8 masih oke 😎😎"],[22491,0,8,"11:08","yeeeu pangeran kerajaan","M","tetep ga sukaa😭😭"],[22492,1,8,"11:08","dah dingin lagi","",""],[22493,1,8,"11:08","iyaa princess","H","yeeeu pangeran kerajaan"],[22494,0,8,"11:08","itu otaknya ikutan dingin apa tetep panas","",""],[22495,0,8,"11:08","kakak princess??","M","iyaa princess"],[22496,1,8,"11:09","dinginn","H","itu otaknya ikutan dingin apa tetep pana"],[22497,1,8,"11:09","kamuu","H","kakak princess??"],[22498,0,8,"11:10","i know","M","kamuu"],[22499,0,8,"11:10","KEREN YAH","M","dinginn"],[22500,1,8,"11:13","<sticker 🙆‍♀>","H","i know"],[22501,1,8,"11:13","lapeerrrr","H","KEREN YAH"],[22502,1,8,"11:13","mo makann","",""],[22503,1,8,"11:13","jam rehat masih lama","",""],[22504,1,8,"11:13","soljum dlu","",""],[22505,1,8,"11:13","<sticker>","",""],[22506,0,8,"11:14","sabar yaaa junior HSHAHAHA","",""],[22507,0,8,"11:14","kalo senior sih udh makan","",""],[22508,1,8,"11:14","😭😭😭😭","",""],[22509,1,8,"11:14","laperr seniorr","",""],[22510,0,8,"11:14","tapi bukannya istirahat jam 12 kak?","",""],[22511,1,8,"11:14","karena ada soljum jadi di percepat","",""],[22512,1,8,"11:14","tapi soljum dlu","",""],[22513,1,8,"11:14","ada jajanan si di polres","",""],[22514,0,8,"11:14","KAN BISA DIJALAN BELI JAJAN","M","tapi soljum dlu"],[22515,0,8,"11:15","nahh","M","ada jajanan si di polres"],[22516,0,8,"11:15","<sticker>","",""],[22517,1,8,"11:15","tapi full asin gitu","",""],[22518,1,8,"11:15","nanti muka gemoy lagii","",""],[22519,0,8,"11:15","BIARIN","M","nanti muka gemoy lagii"],[22520,1,8,"11:16","kok bisa gini","",""],[22521,1,8,"11:16","ga sukaa","H","BIARIN"],[22522,0,8,"11:23","bisaa dongg","M","kok bisa gini"],[22523,0,8,"11:23","keren kan aku","",""],[22524,0,8,"11:23","suka","M","ga sukaa"],[22525,1,8,"11:23","baru tauu","H","bisaa dongg"],[22526,1,8,"11:24","suka aku?","H","suka"],[22527,1,8,"11:26","laperr bgt ya Allah","",""],[22528,1,8,"11:26","semoga banyak jajanan di sanaa","",""],[22529,0,8,"11:26","<sticker>","",""],[22530,0,8,"11:26","suka mie ayam","",""],[22531,1,8,"11:27","ihh iya mau mie ayam","",""],[22532,1,8,"11:27","di sana gak ada tapii","",""],[22533,1,8,"11:27","kebanyakan jajanan esde","",""],[22534,1,8,"11:27","kayaknya udh dari februari deh ga makan mie ayam","M","ihh iya mau mie ayam"],[22535,1,8,"11:28","sumpaa ngeselin bgtttt😭😭","H","😝 Sticker"],[22536,1,8,"11:42","otw jumataann","",""],[22537,0,8,"11:51","SAMAAA BGTT","M","kayaknya udh dari februari deh ga makan "],[22538,0,8,"11:51","semangaat","M","otw jumataann"],[22539,0,8,"11:51","kok semangat ya","",""],[22540,0,8,"11:51","<sticker>","",""],[22541,1,8,"11:52","semangatt jajan","H","semangaat"],[22542,0,8,"11:52","BISAA","M","semangatt jajan"],[22543,1,8,"11:52","tapi ga jajan","",""],[22544,0,8,"11:52","kenapaa enggaa","M","tapi ga jajan"],[22545,1,8,"11:52","gak ada yg ku suka","",""],[22546,0,8,"11:52","bukannya banyaak yaa","M","gak ada yg ku suka"],[22547,0,8,"11:53","jajanann maksudnya","",""],[22548,1,8,"11:53","<photo>","",""],[22549,1,8,"11:53","masaa","H","SAMAAA BGTT"],[22550,0,8,"11:54","bakso kak itu bakso","",""],[22551,0,8,"11:54","beli semua pls","",""],[22552,1,8,"11:54","gak adaa","H","bakso kak itu bakso"],[22553,1,8,"11:54","nanti aja aku","",""],[22554,1,8,"11:54","makan siang aja","",""],[22555,0,8,"12:14","kuaaat gaa","",""],[22556,0,8,"12:14","nanti pingsaan","",""],[22559,1,8,"12:31","kuatt dongg","",""],[22560,1,8,"12:31","aku kuatt","",""],[22561,0,8,"12:43","sudaaa belum sholatnya??","",""],[22562,1,8,"12:44","sudaaa","",""],[22563,1,8,"12:44","baru sampe kantor","",""],[22564,1,8,"12:45","panasss😭😭","",""],[22566,1,8,"12:47","makannn","",""],[22567,0,8,"12:58","okaayiii selamaat mam","",""],[22568,1,8,"13:04","sudahh","",""],[22569,1,8,"13:05","kamu dah makan belom?","",""],[22570,0,8,"13:09","udahh tadii paagi","",""],[22571,1,8,"13:09","bedaa dongg","",""],[22572,1,8,"13:09","makan siang belom?","",""],[22573,0,8,"13:10","BELUMM","",""],[22574,0,8,"13:10","nantii ajaa","",""],[22575,0,8,"13:10","blm laperr juga","",""],[22576,1,8,"13:12","oouuhh okayy","",""],[22577,1,8,"13:12","masi ngerjain tugas","",""],[22578,0,8,"13:12","enggaa blm ada niaat 😔😔","M","masi ngerjain tugas"],[22579,1,8,"13:12","<sticker 🌟>","",""],[22580,1,8,"13:12","terus lagi ngapain","",""],[22581,0,8,"13:13","laaagi bengong","",""],[22582,0,8,"13:13","GATAU AKU JUGA BINGUNG NGAPAIN","",""],[22583,0,8,"13:13","scroll ig","",""],[22584,1,8,"13:13","😭😭😭","",""],[22585,1,8,"13:13","kasiann","H","laaagi bengong"],[22586,1,8,"13:13","siapa suru jomblo","",""],[22587,0,8,"13:13","habiss nyapu ngepel akuu gatau kesurupan apa","",""],[22588,1,8,"13:13","kerjain laa","H","GATAU AKU JUGA BINGUNG NGAPAIN"],[22589,1,8,"13:13","wihh rajin nyaa","H","habiss nyapu ngepel akuu gatau kesurupan"],[22590,0,8,"13:13","blm niaaat kak sabar","M","kerjain laa"],[22591,0,8,"13:14","yaudaah deh nyicil","",""],[22592,1,8,"13:14","dari pada bingung mau ngapainn","H","blm niaaat kak sabar"],[22593,1,8,"13:15","semangatt princesssa","H","yaudaah deh nyicil"],[22594,0,8,"13:15","APAAA","M","semangatt princesssa"],[22595,0,8,"13:15","bureem","",""],[22596,0,8,"13:15","<sticker>","",""],[22597,1,8,"13:15","SEMANGAATTTTT PRINCESSSSSSSSSS 👑👑👑","H","APAAA"],[22598,0,8,"13:15","kakaak kok kerjaa nya nyantai bgt hmmm hmm hmmm","M","dari pada bingung mau ngapainn"],[22599,1,8,"13:16","lagi backup database","H","kakaak kok kerjaa nya nyantai bgt hmmm h"],[22600,1,8,"13:16","jadi nunggu","",""],[22601,0,8,"13:16","HDHSBAAHHBKWJENWK","M","SEMANGAATTTTT PRINCESSSSSSSSSS 👑👑👑"],[22602,1,8,"13:16","<videonote>","",""],[22603,1,8,"13:16","tuhh ga gerak gerakk","",""],[22604,1,8,"13:16","jadi bisa chat kamu","",""],[22605,1,8,"13:17","saltingg","H","HDHSBAAHHBKWJENWK"],[22606,0,8,"13:17","itu kenapaa","M","Video"],[22607,0,8,"13:17","coba gerakinn","",""],[22608,0,8,"13:17","😁😁","",""],[22609,0,8,"13:18","nggaa tuh 🙄","M","saltingg"],[22610,1,8,"13:18","internetnya lemott","H","coba gerakinn"],[22611,1,8,"13:18","makanya ga geralk","",""],[22612,1,8,"13:18","mang eak","H","nggaa tuh 🙄"],[22613,0,8,"13:21","ck coba sini aku aja yg ngerjain","M","internetnya lemott"],[22614,0,8,"13:21","kakakk yg gabisaaa pasti","",""],[22615,1,8,"13:21","ohh boleh bangett","",""],[22616,1,8,"13:21","besok aku bawa laptop yaa","",""],[22617,0,8,"13:22","KAK KAN BERCANDA DOANG 😡😡😡","",""],[22618,0,8,"13:22","iya aku percaya itu pasti internetnya fixx bgt","",""],[22619,0,8,"13:22","fix internet","",""],[22620,1,8,"13:29","wowkwkwkw","",""],[22621,1,8,"13:29","lucu bgt si kamuuu","",""],[22622,1,8,"13:31","iyaa internetnya nge lag bgt","",""],[22623,1,8,"13:31","wifi kantor","",""],[22624,0,8,"13:43","EMANGG","M","lucu bgt si kamuuu"],[22625,0,8,"13:43","masih ngelag gaa","",""],[22626,0,8,"13:43","sini aku hotspotin","",""],[22627,1,8,"13:43","masihh","",""],[22628,1,8,"13:44","malah error","",""],[22629,0,8,"13:44","sengaja kali biar kakak pulang","M","masihh"],[22630,1,8,"13:45","tetep ajaaa sama😭😭","H","sengaja kali biar kakak pulang"],[22631,1,8,"13:46","gak akan pulang","",""],[22632,1,8,"13:53","tiba² meetingg","",""],[22633,0,8,"14:20","yeyyy","M","tiba² meetingg"],[22634,0,8,"14:21","daripadaaa nungguin internet","",""],[22635,0,8,"14:21","atleast....🙄🙄","",""],[22636,1,8,"14:24","iyaa","",""],[22637,1,8,"14:24","meetingnya seruu","",""],[22666,0,8,"14:37","kok kuku aku sakit yaaa kak","",""],[22667,1,8,"14:41","hah kepentok kah?","",""],[22668,1,8,"15:07","alooo","",""],[22669,1,8,"15:07","are you alright?","",""],[22670,1,8,"15:10","<sticker>","",""],[22671,1,8,"15:31","where are you","",""],[22672,1,8,"15:34","<sticker 🌟>","",""],[22673,0,8,"17:10","JETDIURRAAN PLSISS","",""],[22674,0,8,"17:10","AAAAA","",""],[22675,0,8,"17:11","BLM SHOLAATT","",""],[22676,0,8,"17:11","sumpah","",""],[22677,1,8,"17:21","ngetik  yg bener","H","JETDIURRAAN PLSISS"],[22678,1,8,"17:23","astagfirullahh","",""],[22679,0,8,"17:46","UDAH SEKARANG WLEE","M","astagfirullahh"],[22680,1,8,"17:47","anjaayyy","",""],[22681,1,8,"17:47","i need to tell you something","",""],[22682,1,8,"17:47","something very important","",""],[22683,0,8,"17:48","apaatuu","",""],[22684,0,8,"17:48","sinii bilaangg","",""],[22685,1,8,"17:49","aku ga jadi gajian hari inii","",""],[22686,1,8,"17:49","jadinya seninn","",""],[22687,1,8,"17:49","jadi besok gak jadi jalan","",""],[22688,1,8,"17:49","maaf yaaa","",""],[22689,1,8,"17:49","<sticker>","",""],[22690,1,8,"17:49","😭😭😭","",""],[22691,0,8,"17:49","ASTAGAA ITSS OKAAY APASIHH SANTAI","M","😭😭😭"],[22692,1,8,"17:49","senin mau gaa","",""],[22693,0,8,"17:49","aku kiraa apa","",""],[22694,1,8,"17:49","ihh seriuusss","H","ASTAGAA ITSS OKAAY APASIHH SANTAI"],[22695,1,8,"17:50","aku gak enakk","",""],[22696,1,8,"17:50","jadi cowok palkorr","",""],[22697,0,8,"17:50","cowo palkorr apa...","M","jadi cowok palkorr"],[22698,0,8,"17:50","SERIUS","M","ihh seriuusss"],[22699,0,8,"17:51","aku kiraa apaa","",""],[22700,0,8,"17:51","kalo seninn emm paling habis aku kelass","",""],[22701,1,8,"17:51","ingkar janjii","H","cowo palkorr apa..."],[22702,1,8,"17:51","omdoo","",""],[22703,1,8,"17:51","iyaa pas aku pulang kerja jugaa","H","kalo seninn emm paling habis aku kelass"],[22704,1,8,"17:51","kamu pulang jamber?","",""],[22705,0,8,"17:52","oalaaahhh tapi kalo kakak repot next timee gapapaa kok..","",""],[22706,0,8,"17:52","kok aku jadi gaenak gt","",""],[22707,0,8,"17:52","<sticker>","",""],[22708,1,8,"17:52","enggakk lhoo","H","oalaaahhh tapi kalo kakak repot next tim"],[22709,1,8,"17:52","kan aku yg ajakk","",""],[22710,1,8,"17:53","kamu selesai kelas jam berapaa","",""],[22711,1,8,"17:53","sekalian refreshing","",""],[22712,0,8,"17:56","boleehh","",""],[22713,0,8,"17:56","emmm jam 3an kayanyaa aku","",""],[22714,1,8,"17:57","ohh okayy","",""],[22715,1,8,"17:57","kayaknya jam 6an aku berangkat","",""],[22716,1,8,"17:57","aman gak?","",""],[22717,0,8,"17:57","amann sihh","",""],[22718,1,8,"17:57","iyaa biasanya kalo gajian pulangnya bisa jam 5an","",""],[22719,1,8,"17:58","pulangnya bebas terserah kamu","",""],[22720,0,8,"18:03","jam 10 pagi","M","pulangnya bebas terserah kamu"],[22721,0,8,"18:03","waitt kak aku mau sholat duluu","",""],[22722,1,8,"18:03","ihh baru shalat","",""],[22723,1,8,"18:04","😭😭","H","jam 10 pagi"],[22724,1,8,"18:04","tidur di sana","",""],[22725,0,8,"18:13","SHOLAT MAGHRIB","M","ihh baru shalat"],[22726,0,8,"18:13","kan baruuu","",""],[22727,1,8,"18:13","udh dari 17.51 tauu","",""],[22728,0,8,"18:13","emang???","M","udh dari 17.51 tauu"],[22729,1,8,"18:13","iyaaa","",""],[22730,0,8,"18:13","perasaan di masjid baru...","",""],[22731,1,8,"18:14","entah lahh","",""],[22732,1,8,"18:14","di sini gak kedengeean suara mesjid","",""],[22733,1,8,"18:14","jadi patokan ku applikasi","",""],[22734,1,8,"18:15","gituu","",""],[22735,0,8,"18:17","oiyaaa udh pulang yaaaa","",""],[22736,0,8,"18:18","sumpah lupaa","",""],[22737,1,8,"18:18","udh dongg","",""],[22738,1,8,"18:18","dari jam 4","",""],[22739,0,8,"18:18","<sticker>","",""],[22740,0,8,"18:18","gataauu aku ga dikabarinn","",""],[22741,1,8,"18:19","hehhh","",""],[22742,1,8,"18:19","kamu yg menghilangg","",""],[22743,1,8,"18:19","aku nanya kuku kamu kenapaa","",""],[22744,1,8,"18:19","kamu hilang","",""],[22745,1,8,"18:19","setengah hari","",""],[22746,1,8,"18:22","tuh ilang lagi","",""],[22747,0,8,"18:23","UMMM IM HEREEE 🙋‍♀🙋‍♀","",""],[22748,1,8,"18:24","you just disapeared","",""],[22749,1,8,"18:24","<sticker 🌟>","",""],[22750,1,8,"18:24","wkwkwkwk lebay bangett","",""],[22751,0,8,"18:24","HASHAHA GEMASSS","",""],[22752,0,8,"18:25","tau ga","",""],[22753,0,8,"18:25","aku lagi maaakann","",""],[22754,1,8,"18:25","ohh okayy","",""],[22755,1,8,"18:25","selamat makannn","",""],[22756,1,8,"18:25","aku jadi gangguu😭😭","",""],[22757,0,8,"18:30","nouuu","",""],[22758,0,8,"18:30","waitt bebtar lagiii","",""],[22759,1,8,"18:30","okayy","",""],[22760,0,8,"18:35","sudaaaa","",""],[22761,1,8,"18:35","yeayyy","",""],[22762,1,8,"18:35","tau gaa","",""],[22763,1,8,"18:35","temen aku lagi pergiu","",""],[22764,1,8,"18:35","aku sendiriann😭😭","",""],[22765,0,8,"18:35","iyaapp","",""],[22766,0,8,"18:35","maaain kak keluaar kasian banget...","",""],[22767,0,8,"18:35","<sticker>","",""],[22768,1,8,"18:35","malass","",""],[22769,1,8,"18:35","duit sisa dikitt","",""],[22770,1,8,"18:36","sepii","",""],[22771,1,8,"18:36","unting ada kamuh","",""],[22772,0,8,"18:36","NGAKAAAKKK","",""],[22773,0,8,"18:36","kasian bgt anak kost (kita)","",""],[22774,1,8,"18:37","😭😭😭😭","",""],[22775,1,8,"18:37","iyaa","",""],[22776,1,8,"18:37","kesepian","",""],[22777,1,8,"18:37","homesick dikit","",""],[22778,0,8,"18:38","pulang yuk","M","homesick dikit"],[22779,0,8,"18:38","aku sihh enak yaa naik keretaa","",""],[22780,0,8,"18:38","<sticker>","",""],[22781,1,8,"18:38","ayukk","",""],[22782,1,8,"18:38","aku naik motor😭😭","",""],[22783,0,8,"18:38","makanyaaa suruh alsut buat stasiun","",""],[22784,0,8,"18:39","kasiannyahh","",""],[22785,1,8,"18:39","ada sih yg dekett","H","kasiannyahh"],[22786,1,8,"18:39","di poris","H","kasiannyahh"],[22787,0,8,"18:39","aapaaan?","M","ada sih yg dekett"],[22788,0,8,"18:40","rawabuntu?","",""],[22789,0,8,"18:40","JAAAUHHH","",""],[22790,0,8,"18:40","apaantuh kak","M","di poris"],[22791,1,8,"18:40","poris","H","rawabuntu?"],[22792,1,8,"18:40","stasiun","",""],[22793,1,8,"18:40","yahh mainnya kurang jauhh","",""],[22794,0,8,"18:41","emg adaaa","",""],[22795,0,8,"18:41","tangkott yaa??","",""],[22796,0,8,"18:41","ke jkt dulu dong transit","",""],[22797,1,8,"18:41","iyaa","",""],[22798,1,8,"18:41","betull","",""],[22799,1,8,"18:41","emg iyaa??","H","ke jkt dulu dong transit"],[22800,0,8,"18:41","IYALAAAA","M","emg iyaa??"],[22801,1,8,"18:41","gatau si jarang naik keretaa","",""],[22802,0,8,"18:41","wajaar wajaar","M","gatau si jarang naik keretaa"],[22803,0,8,"18:41","nanti senior ajakin","",""],[22804,1,8,"18:41","😭😭😭","",""],[22805,1,8,"18:41","mauuu","",""],[22806,0,8,"18:42","mau kereta??","M","mauuu"],[22807,0,8,"18:42","gapunya akuu","",""],[22808,1,8,"18:42","mauu","",""],[22809,1,8,"18:42","ajak main yg jauhh","",""],[22810,1,8,"18:42","<sticker 👊>","H","gapunya akuu"],[22811,0,8,"18:42","kalo aku penculik gmn kak","M","ajak main yg jauhh"],[22812,1,8,"18:42","gapapa kalo di culik kamu","H","kalo aku penculik gmn kak"],[22813,0,8,"18:42","NGAKAK","M","gapapa kalo di culik kamu"],[22814,1,8,"18:42","culik akuu seniorr","",""],[22815,0,8,"18:42","BENER YAAA","",""],[22816,1,8,"18:42","iyaaa","",""],[22817,0,8,"18:42","aku jual","",""],[22818,0,8,"18:42","kemana kak","",""],[22819,0,8,"18:43","namanya apasih aku lupa","",""],[22820,1,8,"18:43","coba aja kalo bisaa","H","aku jual"],[22821,0,8,"18:43","yg suka jual jual orang itu loh","",""],[22822,1,8,"18:43","apa tuu","",""],[22823,1,8,"18:43","ga tau","",""],[22824,1,8,"18:43","mafia","",""],[22825,0,8,"18:43","NEGARANYA","",""],[22826,0,8,"18:43","brunei","",""],[22827,0,8,"18:43","apasih","",""],[22828,1,8,"18:43","kamboja","",""],[22829,0,8,"18:43","bangkok","",""],[22830,0,8,"18:43","NAAAH","M","kamboja"],[22831,0,8,"18:43","ini loh","",""],[22832,0,8,"18:44","iya nanti aku jual kesanaa","",""],[22833,1,8,"18:44","cobaa ajaaa","",""],[22834,1,8,"18:44","yg ada kamu yg aku juall wkwkwkwkwk","",""],[22835,0,8,"18:44","kak","M","yg ada kamu yg aku juall wkwkwkwkwk"],[22836,0,8,"18:44","<sticker>","",""],[22837,1,8,"18:44","aku ada kenalanb yg punya 7000 anak buah di kambojaa","",""],[22838,0,8,"18:44","JDIEBSKNSSKW","",""],[22839,0,8,"18:45","cmon kakk jual aku ntar rugi","",""],[22840,0,8,"18:45","jgn","",""],[22841,1,8,"18:45","apwowkwk","",""],[22842,1,8,"18:45","untungg","",""],[22843,1,8,"18:45","nanti aku yg beli dehh","",""],[22844,0,8,"18:45","AKU MAKAANNYAAA BANYAAAAK BGT","",""],[22845,1,8,"18:45","dengan seperangkat alat solat","",""],[22846,0,8,"18:46","aku ga makan wiskas loh","",""],[22847,1,8,"18:46","dibayar tunai","",""],[22848,0,8,"18:46","SSSTTT IISBDHWKNENS STOPPPP","",""],[22849,1,8,"18:46","bagussss","H","AKU MAKAANNYAAA BANYAAAAK BGT"],[22850,0,8,"18:46","ngetik apa itu burem","",""],[22851,1,8,"18:46","nanti aku bikin kamu gemukk😭😭","",""],[22852,1,8,"18:46","sering2 aja jalan sama aku wkwkw","",""],[22853,0,8,"18:47","mau bgt","M","nanti aku bikin kamu gemukk😭😭"],[22854,0,8,"18:47","KENAPA YA","",""],[22855,0,8,"18:47","aku makannya serius banyak sumpah... percaya ga","",""],[22856,0,8,"18:47","AKU GABISA GENDUT AKU UDH MINUM SUSU KAMBING TRS AKU UDH DIKASI OBAT CACING DULUU MALAH","",""],[22857,1,8,"18:48","metabolisme kamu cepettt","",""],[22858,1,8,"18:48","jadi susah gemukk","",""],[22859,1,8,"18:48","temen aku ada juga yg begitu","",""],[22860,1,8,"18:48","makan se baskom","",""],[22861,1,8,"18:48","tapi kurus","",""],[22862,1,8,"18:48","literally tulang","",""],[22863,0,8,"18:48","JAHATTT","M","literally tulang"],[22864,0,8,"18:48","aku ada kok dagingnya...","",""],[22865,1,8,"18:49","benerann","H","JAHATTT"],[22866,1,8,"18:49","lebih kurus dari kamuhh","",""],[22867,1,8,"18:49","makannya banyak bangett","",""],[22868,0,8,"18:49","seginii 🤏🤏","",""],[22869,1,8,"18:49","kalo beli nasi padang 2 bungkuss","",""],[22870,1,8,"18:49","😭😭😭","H","seginii 🤏🤏"],[22871,0,8,"18:49","aku ga sebanyak ini sih kak...","M","kalo beli nasi padang 2 bungkuss"],[22872,0,8,"18:49","gakuat juga..","",""],[22873,1,8,"18:49","ahh masih sedikit berartii","H","aku ga sebanyak ini sih kak..."],[22874,1,8,"18:49","bntr","",""],[22875,1,8,"18:49","aku mau mandi dlu sebentar","",""],[22876,1,8,"18:50","nanti mau call an aja gaa?","",""],[22877,1,8,"18:50","capek ngetik","",""],[22878,1,8,"18:50","abis aku mandi","",""],[22879,0,8,"18:50","WKWKWKW BOLEH","",""],[22880,1,8,"18:50","okayy","",""],[22881,1,8,"18:50","5 minutes","",""],[22882,0,8,"18:50","🙄🙄🙄","",""],[22883,0,8,"18:51","okaayy percayaa","",""],[22884,1,8,"18:51","Okayy","",""],[22885,1,8,"18:56","aloo","",""],[22886,1,8,"18:56","sudahh","",""],[22887,0,8,"18:58","CEPET BGT???","",""],[22888,1,8,"18:59","sabunan sama sikat gigi doangg","",""],[22889,1,8,"18:59","biar ga gerah","",""],[22890,0,8,"18:59","bohong","",""],[22891,0,8,"18:59","ini pasti blm mandi","",""],[22892,1,8,"18:59","sumpahhh","",""],[22893,1,8,"18:59","deni tahun","",""],[22894,0,8,"18:59","baru nginjek lantai kamar mandi aja","",""],[22895,0,8,"18:59","SHHAHAHAA","M","deni tahun"],[22896,0,8,"18:59","NGAKAK","",""],[22897,0,8,"18:59","gakuat","",""],[22898,1,8,"18:59","demi tuhann","",""],[22899,0,8,"18:59","deni tahun","",""],[22900,1,8,"18:59","salahh","",""],[22901,1,8,"18:59","typoo","",""],[22902,1,8,"19:00","temen aku dah pulangg😭😭","",""],[22903,0,8,"19:00","deni tahun aku juga","",""],[22904,1,8,"19:00","ayukk","",""],[22905,1,8,"19:00","call","",""],[22906,0,8,"19:00","temen kakak tuhh... senior itu??","M","temen aku dah pulangg😭😭"],[22907,0,8,"19:00","INI NGOMONGIN APA TAKUT","",""],[22908,1,8,"19:00","iyaaa","H","temen kakak tuhh... senior itu??"],[22909,1,8,"19:00","apa kek","H","INI NGOMONGIN APA TAKUT"],[22910,0,8,"19:00","emg gpp kah itu ada senior benerannya.......","",""],[22911,1,8,"19:00","capek ngetik","",""],[22912,1,8,"19:01","gapapaaa","H","emg gpp kah itu ada senior benerannya..."],[22913,1,8,"19:01","udh kayak keluargaa","",""],[22914,0,8,"19:01","ini di telee bisa kahh??","",""],[22915,1,8,"19:01","dekett","",""],[22916,1,8,"19:01","mau di wa?","",""],[22917,0,8,"19:01","eh bebasss","",""],[22918,0,8,"19:01","<sticker>","",""],[22919,0,8,"19:02","KEPENCET","",""],[22920,1,8,"19:02","stiker ngeselin itu lagii","",""],[22921,1,8,"19:02","no wa kamu?","",""],[22922,0,8,"19:02","HSHAHHAA","",""],[22923,0,8,"19:02","0898 •••• •••• 🙈","M","no wa kamu?"],[22924,0,8,"19:02","••","",""]];
+const D = RAW.map(([id, me, d, t, x, qs, qt]) => ({ id, me: me === 1, d, t, x, qs, qt }));
+const byId = new Map(D.map(m => [m.id, m]));
+const NAME = { M: 'Nouval', H: 'Dilaa' };
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const smooth = reduce ? 'auto' : 'smooth';
+const $ = s => document.querySelector(s);
+const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const fmt = n => n.toLocaleString('id-ID');
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} },
+};
+
+/* ---------- stats ---------- */
+const count = (s, re) => (s.match(re) || []).length;
+const isCaps = x => {
+  if (x.startsWith('<')) return false;
+  const L = x.replace(/[^A-Za-z]/g, '');
+  return L.length >= 3 && L === L.toUpperCase();
+};
+const S = { total: D.length, me: 0, her: 0, cryMe: 0, cryHer: 0, caps: 0, croc: 0, senior: 0, stk: 0 };
+for (const m of D) {
+  m.me ? S.me++ : S.her++;
+  const c = count(m.x, /😭/gu);
+  m.me ? (S.cryMe += c) : (S.cryHer += c);
+  if (!m.me && isCaps(m.x)) S.caps++;
+  S.croc += count(m.x, /🐊/gu) + count(m.x.toLowerCase(), /buaya/g);
+  if (/senior/i.test(m.x)) S.senior++;
+  if (m.x.startsWith('<')) S.stk++;
+}
+S.cry = S.cryMe + S.cryHer;
+
+/* ---------- anniversary (since 31 Mei 2026) ---------- */
+const A = (() => {
+  const start = new Date(2026, 4, 31);
+  const n = new Date(), today = new Date(n.getFullYear(), n.getMonth(), n.getDate());
+  const days = Math.round((today - start) / 864e5);
+  const anniDay = Math.min(31, new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate());
+  let months = (today.getFullYear() - 2026) * 12 + today.getMonth() - 4;
+  if (today.getDate() < anniDay) months--;
+  const label = months > 0 && months % 12 === 0 ? `${months / 12} tahun` : `${months} bulan`;
+  return { days, months, label, isDay: months > 0 && today.getDate() === anniDay };
+})();
+if (A.days >= 0) {
+  $('#anni').textContent = A.isDay ? `💜 happy ${A.label}! · since 31 Mei 2026` : `💜 since 31 Mei 2026 · udah ${fmt(A.days)} hari`;
+  $('#letterAnni').textContent = A.isDay
+    ? `Happy ${A.label}, sayang! Udah ${fmt(A.days)} hari sejak 31 Mei, dan aku masih suka senyum-senyum sendiri tiap buka chat kamu, persis kayak hari pertama. 💜`
+    : `Udah ${fmt(A.days)} hari sejak kita jadian tanggal 31 Mei, dan aku masih suka senyum-senyum sendiri tiap buka chat kamu, persis kayak hari pertama. 💜`;
+}
+$('#heroCount').textContent = fmt(S.total);
+$('#ftCount').textContent = fmt(S.total);
+$('#ftCry').textContent = fmt(S.cry);
+
+/* ---------- toast + effects ---------- */
+let toastT;
+function toast(msg) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('on');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => t.classList.remove('on'), 2400);
+}
+const canAnim = !reduce && typeof anime === 'function';
+const canConfetti = !reduce && typeof confetti === 'function';
+if (canAnim) document.documentElement.classList.add('anim');
+const HEART = 'M167 72c19,-38 37,-56 75,-56 42,0 76,33 76,75 0,76 -76,151 -151,227 -76,-76 -151,-151 -151,-227 0,-42 33,-75 75,-75 38,0 57,18 76,56z';
+const shapeCache = {};
+function shapes(set) {
+  const out = [];
+  for (const t of set) {
+    try {
+      if (!shapeCache[t]) shapeCache[t] = t === 'heart' ? confetti.shapeFromPath({ path: HEART }) : confetti.shapeFromText({ text: t, scalar: 2 });
+      out.push(shapeCache[t]);
+    } catch (e) {}
+  }
+  return out;
+}
+const originOf = el => { const r = el.getBoundingClientRect(); return { x: (r.left + r.width / 2) / innerWidth, y: (r.top + r.height / 2) / innerHeight }; };
+function burst(set, origin = { x: .5, y: .5 }, n = 40) {
+  if (!canConfetti) return false;
+  confetti({ particleCount: n, spread: 100, startVelocity: 36, gravity: .9, scalar: 2, ticks: 240, shapes: shapes(set), colors: ['#ff8fc8', '#ff5f9e', '#ffd36b', '#b49bff'], origin, zIndex: 200, disableForReducedMotion: true });
+  return true;
+}
+function rain(set, n = 36) {
+  if (canConfetti) {
+    const o = { particleCount: Math.ceil(n / 2), spread: 70, startVelocity: 50, scalar: 2, ticks: 260, shapes: shapes(set), zIndex: 200, disableForReducedMotion: true };
+    confetti({ ...o, angle: 60, origin: { x: 0, y: .8 } });
+    confetti({ ...o, angle: 120, origin: { x: 1, y: .8 } });
+    return;
+  }
+  if (reduce) return;
+  for (let i = 0; i < n; i++) {
+    const s = document.createElement('div');
+    s.className = 'fx';
+    s.textContent = set[i % set.length];
+    s.style.left = Math.random() * 100 + 'vw';
+    s.style.fontSize = 22 + Math.random() * 30 + 'px';
+    s.style.setProperty('--d', 2.2 + Math.random() * 2.2 + 's');
+    s.style.setProperty('--r', (Math.random() * 720 - 360) + 'deg');
+    s.style.animationDelay = Math.random() * 0.9 + 's';
+    document.body.appendChild(s);
+    s.addEventListener('animationend', () => s.remove());
+  }
+}
+let parading = false;
+function croc() {
+  toast('🐊 aku bukan buaya 😭');
+  if (reduce || parading) return;
+  parading = true;
+  const p = document.createElement('div');
+  p.className = 'parade';
+  p.innerHTML = '<b>🐊</b><span>permisi, mau lewat</span>';
+  document.body.appendChild(p);
+  p.addEventListener('animationend', () => { p.remove(); parading = false; });
+}
+
+/* ---------- lock screen ---------- */
+const LOCK_KEY = 'siap-senior:unlocked';
+const lock = $('#lock');
+let code = '', wrong = 0;
+function setLocked(on) {
+  document.documentElement.classList.toggle('locked', on);
+  lock.classList.toggle('open', !on);
+  lock.setAttribute('aria-hidden', on ? 'false' : 'true');
+  if (!on) setTimeout(() => { if (lock.classList.contains('open')) lock.hidden = true; }, 750);
+  else lock.hidden = false;
+}
+function drawDots() {
+  document.querySelectorAll('#lkDots i').forEach((d, i) => d.classList.toggle('on', i < code.length));
+}
+function press(k) {
+  if (k === 'del') { code = code.slice(0, -1); drawDots(); return; }
+  if (code.length >= 4) return;
+  code += k;
+  drawDots();
+  if (code.length === 4) setTimeout(check, 180);
+}
+function check() {
+  const hint = $('#lkHint');
+  if (code === '0705' || code === '3105') {
+    hint.textContent = code === '3105' ? 'itu tanggal jadian! boleh deh 💜' : (A.isDay ? `happy ${A.label}, senior 💜` : 'selamat datang, senior 💜');
+    hint.classList.remove('bad');
+    store.set(LOCK_KEY, '1');
+    setTimeout(() => { setLocked(false); openMensi(); }, 250);
+  } else {
+    wrong++;
+    const dots = $('#lkDots');
+    dots.classList.remove('shake'); void dots.offsetWidth; dots.classList.add('shake');
+    hint.textContent = wrong >= 3 ? 'psst… 0705 (7 Mei, hari pertama) 😝' : 'salah, junior 😝';
+    hint.classList.add('bad');
+  }
+  code = '';
+  setTimeout(drawDots, 200);
+}
+$('#lkPad').addEventListener('click', e => { const b = e.target.closest('button'); if (b) press(b.dataset.k); });
+document.addEventListener('keydown', e => {
+  if (lock.hidden || lock.classList.contains('open')) return;
+  if (/^\d$/.test(e.key)) press(e.key);
+  else if (e.key === 'Backspace') press('del');
+});
+$('#relock').addEventListener('click', () => {
+  store.del(LOCK_KEY);
+  code = ''; wrong = 0; drawDots();
+  $('#lkHint').textContent = 'petunjuk: hari pertama kita kenal';
+  $('#lkHint').classList.remove('bad');
+  scrollTo(0, 0);
+  setLocked(true);
+});
+setLocked(store.get(LOCK_KEY) !== '1');
+
+/* ---------- message rendering ---------- */
+const EMOJI_ONLY = /^(?:\p{Extended_Pictographic}|\p{Emoji_Modifier}|\p{Regional_Indicator}|️|‍|\s)+$/u;
+const seg = typeof Intl !== 'undefined' && Intl.Segmenter ? new Intl.Segmenter('id', { granularity: 'grapheme' }) : null;
+const graphemes = s => { const t = s.replace(/\s/g, ''); return seg ? [...seg.segment(t)].length : [...t].length; };
+const HER_STK = ['🐱', '🐹', '😝', '🙄', '🥺', '😤', '🫶', '🐻', '🤭', '💅', '🐰', '😼'];
+const ME_STK = ['🦖', '🙆‍♀️', '🫡', '🐶', '🥲'];
+const rich = x => esc(x).replace(/🐊/gu, '<span class="croc" role="button" tabindex="0" aria-label="buaya">🐊</span>');
+
+function content(m) {
+  const x = m.x;
+  if (x.startsWith('<sticker')) {
+    const set = m.me ? ME_STK : HER_STK;
+    const e = x.slice(9, -1).trim() || set[m.id % set.length];
+    return { cls: 'stk', html: `<div class="stk-art" role="img" aria-label="stiker">${e}</div>` };
+  }
+  if (x === '<photo>') return { cls: '', html: '<div class="media"><b>📷</b><span>foto</span><small>ga ikut ke-save, maaf</small></div>' };
+  if (x === '<videonote>') return { cls: 'stk', html: '<div class="vnote"><div><b>▶</b><small>video bulet</small></div></div>' };
+  if (x === '<code>') return { cls: '', html: '<pre class="code">export default function Page() {\n  return &lt;h1&gt;halo, senior&lt;/h1&gt;\n}</pre><small class="note-s">isi aslinya ga ke-load, ini ilustrasi 🙏</small>' };
+  if (EMOJI_ONLY.test(x) && graphemes(x) <= 3) return { cls: 'emo', html: `<span class="tx">${rich(x)}</span>` };
+  return { cls: '', html: `<span class="tx">${rich(x)}</span>` };
+}
+function msgHTML(m, first, last, withId) {
+  const c = content(m);
+  const q = m.qs ? `<span class="q ${m.qs === 'M' ? 'qm' : 'qh'}"><b>${esc(NAME[m.qs])}</b><span>${esc(m.qt)}</span></span>` : '';
+  const cls = ['msg', m.me ? 'me' : 'her', c.cls, first ? 'first' : '', last ? 'last' : '', m.id === 22919 ? 'kepencet' : ''].filter(Boolean).join(' ');
+  const tick = m.me ? '<i class="tick">✓✓</i>' : '';
+  return `<div class="${cls}"${withId ? ` id="m${m.id}"` : ''} data-id="${m.id}"><div class="bub">${q}${c.html}<span class="meta">${m.t}${tick}</span></div></div>`;
+}
+function seqHTML(list, withId) {
+  return list.map((m, i) => {
+    const p = list[i - 1], n = list[i + 1];
+    return msgHTML(m, !p || p.me !== m.me || p.d !== m.d, !n || n.me !== m.me || n.d !== m.d, withId);
+  }).join('');
+}
+
+/* ---------- full chat ---------- */
+const tg = $('#tg'), tb = $('#tgBody'), listEl = $('#tgList');
+const DAYS = { 7: 'Kamis, 7 Mei 2026', 8: 'Jumat, 8 Mei 2026' };
+listEl.innerHTML = [7, 8].map(d => `<div class="day"><div class="date"><span>${DAYS[d]}</span></div>${seqHTML(D.filter(m => m.d === d), true)}</div>`).join('');
+
+function glow(el) {
+  el.classList.remove('glow'); void el.offsetWidth; el.classList.add('glow');
+  setTimeout(() => el.classList.remove('glow'), 2700);
+}
+function centerIn(el) {
+  tb.scrollTo({ top: el.offsetTop - tb.clientHeight / 2 + el.offsetHeight / 2, behavior: smooth });
+}
+function jumpTo(id) {
+  if (rp) stopReplay();
+  const el = document.getElementById('m' + id);
+  if (!el) return;
+  tg.scrollIntoView({ behavior: smooth, block: 'start' });
+  centerIn(el);
+  glow(el);
+}
+$('#chips').addEventListener('click', e => {
+  const b = e.target.closest('[data-jump]');
+  if (b) jumpTo(+b.dataset.jump);
+});
+
+/* search */
+const qIn = $('#q');
+let hits = [], hi = -1, qT, confettiFor = '';
+function clearHits() { listEl.querySelectorAll('.hit').forEach(e => e.classList.remove('hit')); }
+function runSearch() {
+  const q = qIn.value.trim().toLowerCase();
+  clearHits();
+  hits = []; hi = -1;
+  if (q.length < 2) { $('#qCount').textContent = ''; return; }
+  hits = D.filter(m => !m.x.startsWith('<') && m.x.toLowerCase().includes(q)).map(m => m.id);
+  hits.forEach(id => document.getElementById('m' + id).classList.add('hit'));
+  $('#qCount').textContent = hits.length ? `${hits.length} ketemu` : 'ga ada 🥲';
+  if (q.replace(/\s+/g, ' ') === 'deni tahun' && confettiFor !== q) { confettiFor = q; rain(['🎉', '🎊', '✨', '🚿', '💜']); toast('deni tahun! 🚿'); }
+  else if (q.includes('buaya') || q === '🐊') croc();
+  if (hits.length) step(1, false);
+}
+function step(dir, scrollPage = true) {
+  if (!hits.length) return;
+  if (rp) stopReplay();
+  hi = (hi + dir + hits.length) % hits.length;
+  const el = document.getElementById('m' + hits[hi]);
+  $('#qCount').textContent = `${hi + 1}/${hits.length}`;
+  if (scrollPage) tg.scrollIntoView({ behavior: smooth, block: 'start' });
+  centerIn(el);
+  glow(el);
+}
+qIn.addEventListener('input', () => { clearTimeout(qT); qT = setTimeout(() => { qT = 0; runSearch(); }, 280); });
+qIn.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  if (qT) { clearTimeout(qT); qT = 0; runSearch(); } else step(1);
+});
+$('#qUp').addEventListener('click', () => step(-1));
+$('#qDown').addEventListener('click', () => step(1));
+
+/* replay */
+let rp = null, speed = 1;
+const st = $('#tgSt'), typing = $('#typing'), endEl = $('#tgEnd');
+function setStatus(isTyping) {
+  st.textContent = isTyping ? 'sedang mengetik…' : 'senior · online';
+  st.classList.toggle('typing', isTyping);
+}
+function startReplay() {
+  const els = [...listEl.querySelectorAll('.date,.msg')];
+  let start = els.findIndex(e => e.offsetTop + e.offsetHeight > tb.scrollTop + 8);
+  if (start < 0 || start >= els.length - 3) start = 0;
+  els.forEach((e, i) => { e.hidden = i > start; });
+  endEl.hidden = true;
+  rp = { els, i: start, timer: 0 };
+  $('#chips').hidden = true;
+  $('#rpBar').hidden = false;
+  tg.scrollIntoView({ behavior: smooth, block: 'start' });
+  tb.scrollTop = tb.scrollHeight;
+  tick();
+}
+function tick() {
+  if (!rp) return;
+  const next = rp.els[rp.i + 1];
+  if (!next) { stopReplay(); toast('udah sampai akhir 💚'); return; }
+  const id = +next.dataset.id;
+  const m = byId.get(id);
+  const isDate = !m;
+  const len = m ? (m.x.startsWith('<') ? 14 : m.x.length) : 0;
+  const base = isDate ? 500 : Math.min(2600, 520 + len * 30);
+  const showTyping = m && !m.me && speed < 20;
+  if (showTyping) { typing.hidden = false; setStatus(true); tb.scrollTop = tb.scrollHeight; }
+  rp.timer = setTimeout(() => {
+    if (!rp) return;
+    typing.hidden = true; setStatus(false);
+    next.hidden = false;
+    if (!reduce) { next.classList.remove('pop'); void next.offsetWidth; next.classList.add('pop'); }
+    rp.i++;
+    if (m) $('#rpWhen').textContent = `${m.d} Mei · ${m.t}`;
+    tb.scrollTop = tb.scrollHeight;
+    tick();
+  }, base / speed);
+}
+function stopReplay() {
+  if (!rp) return;
+  clearTimeout(rp.timer);
+  const cur = rp.els[rp.i];
+  rp.els.forEach(e => { e.hidden = false; });
+  rp = null;
+  typing.hidden = true; setStatus(false);
+  endEl.hidden = false;
+  $('#chips').hidden = false;
+  $('#rpBar').hidden = true;
+  if (cur) tb.scrollTop = cur.offsetTop - tb.clientHeight + cur.offsetHeight + 24;
+}
+$('#rpStart').addEventListener('click', startReplay);
+$('#rpStop').addEventListener('click', stopReplay);
+$('#rpBar').addEventListener('click', e => {
+  const b = e.target.closest('[data-speed]');
+  if (!b) return;
+  speed = +b.dataset.speed;
+  document.querySelectorAll('[data-speed]').forEach(x => x.classList.toggle('on', x === b));
+});
+
+/* easter eggs */
+document.addEventListener('click', e => {
+  if (e.target.closest('.croc')) croc();
+  else if (e.target.closest('.kepencet')) { rain(['😝', '🙃', '🤭', '😼', '🫣', '🐱']); toast('KEPENCET 😝'); }
+});
+document.addEventListener('keydown', e => {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('croc')) { e.preventDefault(); croc(); }
+});
+
+/* ---------- wrapped ---------- */
+const crocFirst = D.find(m => m.x.includes('🐊'));
+const SLIDES = [
+  ['s1', 'Kamis, 7 Mei 2026 · 07:47', '<div class="big sm">“Hai! Aku dari Leomatchbot ✨”</div><p>Begitulah semuanya dimulai. Pesan pembuka paling template sedunia.</p><div class="ex">haai salam kenal juga kakk</div>'],
+  ['s2', 'durasi', '<div class="big">35 jam</div><p>dari pesan pertama sampai “no wa kamu?”. Di tengahnya cuma sempat tidur 5 jam.</p>'],
+  ['s3', 'total pesan', `<div class="big"><span class="cnt" data-n="${S.total}">${fmt(S.total)}</span></div><p>Junior lebih bawel. Ini fakta, bukan fitnah.</p><div class="vsbar"><div>Junior<span style="width:100%"></span>${fmt(S.me)}</div><div>Senior<span style="width:${Math.round(S.her / S.me * 100)}%"></span>${fmt(S.her)}</div></div>`],
+  ['s4', 'emoji terfavorit', `<div class="big">😭 × <span class="cnt" data-n="${S.cry}">${fmt(S.cry)}</span></div><p>${fmt(S.cryMe)} di antaranya dari junior. Senior cuma ${fmt(S.cryHer)}. Siapa yang cengeng di sini?</p>`],
+  ['s5', 'mode capslock', `<div class="big"><span class="cnt" data-n="${S.caps}">${fmt(S.caps)}</span></div><p>pesan senior yang diketik PAKAI CAPSLOCK.</p><div class="ex">BEDA 2 TAHUN DOANG KAK 😡😡😡</div>`],
+  ['s6', 'tuduhan', `<div class="big">🐊 × <span class="cnt" data-n="${S.croc}">${fmt(S.croc)}</span></div><p>kali junior dibilang buaya. Tuduhan pertama jam ${crocFirst ? crocFirst.t : '21:48'}, gara-gara ngaku belum pernah bonceng cewek.</p><div class="ex">kaya 🐊</div>`],
+  ['s7', 'kata kunci', `<div class="big"><span class="cnt" data-n="${S.senior}">${fmt(S.senior)}</span>×</div><p>kata “senior” muncul. Padahal lahirnya cuma beda 2 tahun, dan yang lebih tua justru junior.</p><div class="ex me">siap seniorr</div>`],
+  ['s8', 'balasan terlama', '<div class="big sm">2 jam 34 menit</div><p>waktu yang dibutuhkan senior buat jawab tebakan “dkv, soalnya kamu estetikk”.</p><div class="ex">HAH BUKANNN · agribisnis akuu</div>'],
+  ['s9', 'malam pertama', '<div class="big">23:35</div><p>chat hari pertama baru selesai jam segini.</p><div class="ex">ASTAGA IYA JAM 11 · demi allah gasadar</div>'],
+  ['s10', 'kencan pertama', '<div class="big sm">Sabtu → Senin</div><p>rencananya nongkrong di 527 hari Sabtu. Diundur ke Senin karena junior ga jadi gajian. 🥲</p><div class="ex">ASTAGAA ITSS OKAAY APASIHH SANTAI</div>'],
+  ['s11', '31 Mei 2026', `<div class="big sm">Jadian 💜</div><p>23 hari setelah chat ini, junior &amp; senior resmi jadian.</p>${A.days >= 0 ? `<div class="ex">${A.isDay ? `happy ${A.label}! ` : ''}udah ${fmt(A.days)} hari 🥳</div>` : ''}`],
+];
+const story = $('#story');
+$('#storySlides').innerHTML = SLIDES.map(([c, k, h], i) => `<div class="slide ${c}" aria-hidden="${i ? 'true' : 'false'}"><div class="k">${k}</div>${h}</div>`).join('');
+$('#storyBars').innerHTML = SLIDES.map(() => '<i></i>').join('');
+const slides = [...document.querySelectorAll('.slide')], bars = [...document.querySelectorAll('#storyBars i')];
+let si = 0;
+function showSlide(i, user = true) {
+  si = Math.max(0, Math.min(SLIDES.length - 1, i));
+  slides.forEach((s, j) => { s.classList.toggle('on', j === si); s.setAttribute('aria-hidden', j === si ? 'false' : 'true'); });
+  bars.forEach((b, j) => b.classList.toggle('on', j <= si));
+  $('#storyTap').textContent = si === SLIDES.length - 1 ? 'ketuk buat ulang ↺' : `${si + 1}/${SLIDES.length} · ketuk buat lanjut ›`;
+  const s = slides[si];
+  if (!canAnim) return;
+  anime({ targets: s.querySelector('.big'), scale: [.5, 1], rotate: [-8, 0], opacity: [0, 1], duration: 1000, easing: 'easeOutElastic(1, .6)' });
+  anime({ targets: s.querySelectorAll('p, .ex'), translateY: [18, 0], opacity: [0, 1], delay: anime.stagger(140, { start: 200 }), duration: 600, easing: 'easeOutQuad' });
+  anime({ targets: s.querySelectorAll('.vsbar span'), scaleX: [0, 1], delay: anime.stagger(200, { start: 300 }), duration: 900, easing: 'easeOutExpo' });
+  s.querySelectorAll('.cnt').forEach(c => {
+    const o = { v: 0 };
+    anime({ targets: o, v: +c.dataset.n, round: 1, duration: 1400, easing: 'easeOutExpo', update: () => { c.textContent = fmt(o.v); } });
+  });
+  const FX = { 3: ['😭'], 5: ['🐊'], 9: ['🥲', '💸'], 10: ['heart', '💜', '🥳'] };
+  if (user && FX[si]) burst(FX[si], originOf(story), 36);
+}
+story.addEventListener('click', e => {
+  if (e.target.closest('#storyPrev')) return showSlide(si - 1);
+  if (e.target.closest('#storyNext')) return showSlide(si + 1);
+  const r = story.getBoundingClientRect();
+  if (e.clientX - r.left < r.width * 0.3) showSlide(si - 1);
+  else showSlide(si === SLIDES.length - 1 ? 0 : si + 1);
+});
+story.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') { e.preventDefault(); showSlide(si + 1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); showSlide(si - 1); }
+});
+showSlide(0, false);
+
+/* ---------- episodes ---------- */
+const EPS = [
+  ['🎨', 'Tebak Jurusan', 'Junior nebak pakai perasaan. Senior jawabnya 2,5 jam kemudian.', [20928, 20929, 20931, 20932, 20933, 21128, 21139]],
+  ['🍼', 'Senior vs Bocil', 'Beda dua tahun, tapi dramanya kayak beda generasi.', [21313, 21315, 21316, 21317, 21318, 21319, 21320, 21324]],
+  ['🤖', 'Aku ChatGPT-nya', 'Plot twist: dari tadi junior chattan sama bot.', [21536, 21537, 21538, 21539, 21540, 21541, 21542, 21543]],
+  ['🍵', 'Gombal Bapak-Bapak', 'Gombalan pertama. Langsung ketahuan.', [21630, 21632, 21639, 21643, 21644, 21645]],
+  ['🌊', 'Air Laut', 'Review rasa paling jujur sepanjang sejarah.', [21650, 21658, 21661, 21662, 21664, 21666, 21667, 21669]],
+  ['🚐', 'Takut Diculik', 'Diajak nongkrong, yang dicek duluan malah keamanannya.', [21913, 21914, 21915, 21916, 21917, 21918, 21920, 21923, 21924, 21925]],
+  ['🛵', 'Bonceng Pertama', 'Pengakuan jujur yang berujung dituduh buaya.', [21980, 21981, 21982, 21985, 21995, 21997, 22000, 22002, 22019, 22023, 22024]],
+  ['📏', 'Tinggi Badan', 'Negosiasi angka paling alot: 130? 171? 125?', [22088, 22089, 22092, 22097, 22098, 22125, 22128, 22141, 22142, 22143, 22144, 22146]],
+  ['✨', 'Fineshyt', 'Niatnya muji. Dibalas buaya Surabaya.', [22228, 22229, 22232, 22233, 22234, 22235, 22238, 22243]],
+  ['👕', 'Baju OB', 'Fatwa paling bijak dari senior.', [22335, 22336, 22339, 22340, 22343, 22344, 22346]],
+  ['🗺️', 'Dijual ke Kamboja', 'Junior minta diculik. Senior udah siapin negara tujuan.', [22811, 22812, 22814, 22817, 22818, 22825, 22828, 22830, 22843, 22844, 22845, 22846, 22847, 22848]],
+  ['🚿', 'Deni Tahun', 'Sumpah paling sakral, typo paling abadi.', [22887, 22888, 22890, 22891, 22892, 22893, 22894, 22895, 22899, 22903]],
+];
+const eps = $('#eps');
+eps.innerHTML = EPS.map(([e, t, s, ids], i) => {
+  const list = ids.map(id => byId.get(id)).filter(Boolean);
+  return `<article class="ep" aria-label="Episode ${i + 1}: ${esc(t)}">
+    <div class="ep-h"><div class="ep-e" aria-hidden="true">${e}</div><div><div class="ep-n">EPS ${String(i + 1).padStart(2, '0')} · ${list[0].d} Mei ${list[0].t}</div><div class="ep-t">${esc(t)}</div></div></div>
+    <p class="ep-s">${esc(s)}</p>
+    <div class="ep-chat">${seqHTML(list, false)}</div>
+    <button class="ep-go" data-go="${ids[0]}">Lihat di chat aslinya →</button>
+  </article>`;
+}).join('');
+eps.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) jumpTo(+b.dataset.go); });
+const epCards = [...eps.children];
+function epIndex() {
+  const mid = eps.scrollLeft + eps.clientWidth / 2;
+  let best = 0, d = Infinity;
+  epCards.forEach((c, i) => { const dd = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid); if (dd < d) { d = dd; best = i; } });
+  return best;
+}
+function epGo(i) {
+  const c = epCards[Math.max(0, Math.min(epCards.length - 1, i))];
+  eps.scrollTo({ left: c.offsetLeft - (eps.clientWidth - c.offsetWidth) / 2, behavior: smooth });
+}
+const epLabel = () => { $('#epCount').textContent = `episode ${epIndex() + 1} dari ${EPS.length}`; };
+eps.addEventListener('scroll', () => requestAnimationFrame(epLabel), { passive: true });
+$('#epPrev').addEventListener('click', () => epGo(epIndex() - 1));
+$('#epNext').addEventListener('click', () => epGo(epIndex() + 1));
+epLabel();
+
+/* ---------- quote board ---------- */
+const QUOTES = [21464, 21977, 21539, 21667, 22344, 22846, 22250, 22474, 22491, 22118, 21661, 22143, 21364, 22845];
+const COLORS = ['h', 'y', 'g'];
+$('#board').innerHTML = QUOTES.map((id, i) => {
+  const m = byId.get(id);
+  const c = m.me ? 'm' : COLORS[i % COLORS.length];
+  const wide = m.x.length > 34 ? ' wide' : '';
+  const r = ((i * 37) % 7 - 3) * 0.6;
+  return `<button class="note ${c}${wide}" style="--r:${r}deg" data-r="${r}" data-go="${id}">“${esc(m.x)}”<small>— ${m.me ? 'junior' : 'senior'}, ${m.d} Mei ${m.t}</small></button>`;
+}).join('');
+$('#board').addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) jumpTo(+b.dataset.go); });
+
+/* ---------- coupons ---------- */
+const CP = [
+  ['fore', '🥤', '1× Butterscotch Fore', 'kalau ga suka, junior yang minum. senior pesen yang lain.'],
+  ['mie', '🍜', '1× Mie Ayam', 'buat dua orang yang sama-sama belum makan mie ayam dari Februari.'],
+  ['jemput', '🛵', '1× Dijemput', 'garansi anti nyebur got & anti nabrak gerobak somay.'],
+  ['culik', '🚆', '1× Diculik Naik Kereta', 'ke tempat yang jauh. bukan ke Kamboja.'],
+];
+const CP_KEY = 'siap-senior:kupon';
+let used = {};
+try { used = JSON.parse(store.get(CP_KEY) || '{}') || {}; } catch (e) { used = {}; }
+const cpEl = $('#coupons');
+cpEl.innerHTML = CP.map(([k, e, t, s]) => `<button class="cp${used[k] ? ' used' : ''}" data-k="${k}" aria-pressed="${!!used[k]}"><div class="ce" aria-hidden="true">${e}</div><div class="ct"><b>${t}</b><small>${s}</small><i>KUPON SENIOR · TANPA KEDALUWARSA</i></div><div class="stamp">DITUKAR ✓</div></button>`).join('');
+cpEl.addEventListener('click', e => {
+  const b = e.target.closest('.cp');
+  if (!b) return;
+  const k = b.dataset.k;
+  used[k] = !used[k];
+  b.classList.toggle('used', used[k]);
+  b.setAttribute('aria-pressed', used[k]);
+  store.set(CP_KEY, JSON.stringify(used));
+  if (used[k]) { toast('kupon ditukar! tunjukin layar ini ke junior 💜'); burst(['🎟️', '💜', '✨', 'heart'], originOf(b), 45) || rain(['💜', '✨', '🎟️'], 18); }
+});
+
+/* ---------- dock ---------- */
+const links = [...document.querySelectorAll('.dock a')];
+links.forEach(a => a.addEventListener('click', () => { if (canAnim) anime({ targets: a.querySelector('span'), translateY: [0, -10, 0], scale: [1, 1.35, 1], duration: 600, easing: 'easeOutQuad' }); }));
+const io = new IntersectionObserver(entries => {
+  entries.forEach(en => {
+    if (!en.isIntersecting) return;
+    const s = en.target.id === 'mutiara' ? 'episode' : en.target.id;
+    links.forEach(a => a.classList.toggle('on', a.dataset.s === s));
+  });
+}, { rootMargin: '-45% 0px -50% 0px' });
+['wrapped', 'episode', 'mutiara', 'chat', 'penutup'].forEach(id => io.observe(document.getElementById(id)));
+
+/* ---------- mensiversary + hero ---------- */
+function splitChars(el) {
+  [...el.childNodes].forEach(n => {
+    if (n.nodeType === 3) {
+      const f = document.createElement('span');
+      f.innerHTML = [...n.textContent].map(c => `<span class="ch">${c === ' ' ? '&nbsp;' : esc(c)}</span>`).join('');
+      n.replaceWith(...f.childNodes);
+    } else if (n.nodeType === 1) { n.classList.add('split'); splitChars(n); }
+  });
+}
+let heroPlayed = false;
+function playHero() {
+  if (heroPlayed || !canAnim) return;
+  heroPlayed = true;
+  anime({ targets: '.hero h1 .ch', translateY: [-60, 0], opacity: [0, 1], rotate: () => [anime.random(-30, 30), 0], delay: anime.stagger(55), duration: 1200, easing: 'easeOutElastic(1, .55)' });
+  anime({ targets: '.duo .pp', scale: [0, 1], delay: anime.stagger(160, { start: 450 }), duration: 900, easing: 'easeOutElastic(1, .6)' });
+  anime({ targets: '.av', rotate: [-7, 7], direction: 'alternate', loop: true, duration: 1100, easing: 'easeInOutSine', delay: anime.stagger(550) });
+  anime({ targets: '.floaties span', translateX: () => anime.random(-26, 26), translateY: () => anime.random(-34, 34), rotate: () => anime.random(-35, 35), direction: 'alternate', loop: true, duration: () => anime.random(2200, 3600), easing: 'easeInOutSine' });
+}
+let typed = null, mensiRain = 0;
+function openMensi() {
+  if (A.days < 0) return playHero();
+  const m = $('#mensi');
+  const words = A.isDay ? ['Happy', 'Mensiversary,', 'Sayanggg!'] : ['Hai,', 'Sayanggg!'];
+  $('#mensiT').innerHTML = words.map((w, i) => `<span class="w${i === words.length - 1 ? ' w2' : ''}">${[...w].map(c => `<span class="ch">${esc(c)}</span>`).join('')}</span>`).join(' ');
+  $('#mensiK').textContent = `since 31 Mei 2026 · ${fmt(A.days)} hari`;
+  const [num, unit] = A.label.split(' ');
+  $('#mensiNum').textContent = num;
+  $('#mensiUnit').textContent = unit;
+  const msg = (A.isDay ? `Ga kerasa udah <b>${A.label}</b> kita saling mencintaii 🥹` : `Udah <b>${A.label}</b> lebih, ${fmt(A.days)} hari kita saling mencintaii 🥹`)
+    + '^500<br><br>Dari “haai salam kenal juga kakk” sampai hari ini, kamu tetap notif favorit aku.^400<br><br>Makasih udah sabar sama junior yang bawel ini. Aku sayang kamu, hari ini, besok, dan seterusnya. 💜';
+  $('#mensiSig').style.opacity = 0;
+  $('#mensiGo').style.opacity = 0;
+  m.hidden = false;
+  m.classList.remove('bye');
+  m.scrollTop = 0;
+  document.documentElement.classList.add('locked');
+  const orb = $('#orbit');
+  if (!orb.childElementCount) {
+    orb.innerHTML = ['💜', '💗', '✨', '🥰', '💞', '🌏', '💖', '✨'].map((e, i) => {
+      const a = i / 8 * Math.PI * 2;
+      return `<span style="left:${46 + Math.cos(a) * 46}%;top:${30 + Math.sin(a) * 26}%">${e}</span>`;
+    }).join('');
+  }
+  const done = () => {
+    if (canAnim) anime({ targets: ['#mensiSig', '#mensiGo'], opacity: [0, 1], translateY: [14, 0], delay: anime.stagger(280), duration: 700, easing: 'easeOutBack' });
+    else { $('#mensiSig').style.opacity = 1; $('#mensiGo').style.opacity = 1; }
+  };
+  if (canAnim) {
+    anime({ targets: '#mensiT .ch', translateY: [-70, 0], opacity: [0, 1], rotate: () => [anime.random(-35, 35), 0], delay: anime.stagger(40), duration: 1100, easing: 'easeOutElastic(1, .55)' });
+    anime({ targets: '#mensiHeart', scale: [0, 1], rotate: [-20, 0], delay: 500, duration: 1100, easing: 'easeOutElastic(1, .5)' });
+    anime({ targets: '#mensiHeart svg', scale: [1, 1.1, 1, 1.06, 1], duration: 1300, loop: true, easing: 'easeInOutSine', delay: 1600 });
+    anime({ targets: '#orbit span', opacity: [0, .9], delay: anime.stagger(90, { start: 700 }), duration: 600, easing: 'linear' });
+    anime({ targets: '#orbit span', translateY: () => anime.random(-16, 16), rotate: () => anime.random(-30, 30), direction: 'alternate', loop: true, duration: () => anime.random(1300, 2300), easing: 'easeInOutSine' });
+  }
+  if (typed) { typed.destroy(); typed = null; }
+  const box = $('#mensiTyped');
+  box.innerHTML = '';
+  if (!reduce && typeof Typed === 'function') {
+    setTimeout(() => { typed = new Typed(box, { strings: [msg], typeSpeed: 26, contentType: 'html', cursorChar: '|', onComplete: done }); }, 1300);
+  } else {
+    box.innerHTML = msg.replace(/\^\d+/g, '');
+    done();
+  }
+  if (canConfetti) {
+    setTimeout(() => burst(['heart', '💜', '💗', '🥰'], { x: .5, y: .4 }, 80), 600);
+    clearInterval(mensiRain);
+    let k = 0;
+    mensiRain = setInterval(() => {
+      confetti({ particleCount: 3, startVelocity: 0, ticks: 340, gravity: .45, drift: Math.random() - .5, scalar: 2, origin: { x: Math.random(), y: -0.05 }, shapes: shapes(['heart', '💜', '✨']), colors: ['#ff8fc8', '#ff5f9e', '#b49bff'], zIndex: 200, disableForReducedMotion: true });
+      if (++k > 70) clearInterval(mensiRain);
+    }, 350);
+  }
+}
+function closeMensi() {
+  const m = $('#mensi');
+  clearInterval(mensiRain);
+  m.classList.add('bye');
+  document.documentElement.classList.remove('locked');
+  setTimeout(() => { m.hidden = true; }, 500);
+  playHero();
+}
+$('#mensiGo').addEventListener('click', closeMensi);
+
+/* ---------- reveal on scroll ---------- */
+if (canAnim) {
+  const seen = new IntersectionObserver(es => es.forEach(en => {
+    if (!en.isIntersecting) return;
+    seen.unobserve(en.target);
+    const t = en.target;
+    if (t.classList.contains('ep')) {
+      anime({ targets: t.querySelectorAll('.ep-chat .msg'), opacity: [0, 1], translateY: [16, 0], scale: [.92, 1], delay: anime.stagger(120, { start: 150 }), duration: 550, easing: 'easeOutBack' });
+      anime({ targets: t.querySelector('.ep-e'), rotate: [-25, 0], scale: [.4, 1], duration: 1000, easing: 'easeOutElastic(1, .5)' });
+    } else if (t.id === 'board') {
+      anime({ targets: t.querySelectorAll('.note'), opacity: [0, 1], scale: [.3, 1], rotate: el => [anime.random(-25, 25), +el.dataset.r], delay: anime.stagger(70), duration: 900, easing: 'easeOutElastic(1, .65)' });
+    } else if (t.classList.contains('letter')) {
+      anime({ targets: t, opacity: [0, 1], translateY: [90, 0], rotate: [-9, -1], duration: 1400, easing: 'easeOutElastic(1, .7)' });
+    } else if (t.id === 'coupons') {
+      anime({ targets: t.children, opacity: [0, 1], translateX: [-40, 0], delay: anime.stagger(120), duration: 700, easing: 'easeOutBack' });
+    }
+  }), { threshold: .08 });
+  document.querySelectorAll('.ep, #board, .letter, #coupons').forEach(el => seen.observe(el));
+}
+
+/* tap anywhere for hearts */
+document.addEventListener('click', e => {
+  if (!canAnim || e.target.closest('button, a, input, .story, .croc, .tg, .eps, #lock, #mensi')) return;
+  const h = document.createElement('div');
+  h.className = 'pop-heart';
+  h.textContent = ['💜', '💗', '💖', '✨', '🥰'][Math.floor(Math.random() * 5)];
+  h.style.left = e.clientX - 13 + 'px';
+  h.style.top = e.clientY - 15 + 'px';
+  document.body.appendChild(h);
+  anime({ targets: h, translateY: -100 - Math.random() * 50, translateX: anime.random(-30, 30), scale: [.4, 1.4], opacity: [1, 0], rotate: anime.random(-35, 35), duration: 1100, easing: 'easeOutQuad', complete: () => h.remove() });
+});
+
+/* ---------- start ---------- */
+if (canAnim) splitChars($('.hero h1'));
+if (store.get(LOCK_KEY) === '1') A.isDay ? openMensi() : playHero();
+})();
+</script>
